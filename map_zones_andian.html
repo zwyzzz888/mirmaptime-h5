@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+ <title>未知暗殿不迷路</title>
+<script language="javascript">
+
+/*// 给目标图片元素绑定 mousemove 事件，获取鼠标在图片上的位置
+const image = document.getElementById('mypic2');
+console.log("image:"+image)
+image.addEventListener('mousemove', (event) => {
+  const mousePositionOnImage = getMousePositionOnImage(event);
+  console.log(mousePositionOnImage); // 输出相对于图片的坐标对象
+});*/
+
+
+function getMousePositionOnImage(event,id,bx,by) {
+  const image = event.target; // 获取事件源（即图片元素）
+  const rect = image.getBoundingClientRect(); // 图片距离视窗左上角的位置信息
+
+  const x = event.clientX - rect.left; // 鼠标相对于图片左上角的横向偏移量
+  const y = event.clientY - rect.top; // 鼠标相对于图片左上角的纵向偏移量
+  var str = "X:"+parseInt(x/bx)+"\nY:"+parseInt(y/by);
+  document.getElementById(id).innerHTML = str;
+}
+
+function clickOnImage(event,bx,by){
+  const image = event.target; // 获取事件源（即图片元素）
+  const rect = image.getBoundingClientRect(); // 图片距离视窗左上角的位置信息
+
+  const x = event.clientX - rect.left; // 鼠标相对于图片左上角的横向偏移量
+  const y = event.clientY - rect.top; // 鼠标相对于图片左上角的纵向偏移量
+  var str = "X:"+parseInt(x/bx)+"\nY:"+parseInt(y/by);
+alert(str);
+
+}
+
+function getPic(htmlObj){
+
+var zb = {x:0,y:0}
+
+do{
+
+zb.x += htmlObj.offsetLeft
+
+zb.y += htmlObj.offsetTop
+
+htmlObj = htmlObj.offsetParent
+
+}   
+
+while(htmlObj)
+
+return zb
+
+}
+
+
+function getXY(){
+
+var x = window.event.clientX - getPic(mypic).x;
+var y = window.event.clientY - getPic(mypic).y;
+var str = "X:"+parseInt(x/3*2)+"\nY:"+parseInt(y/1);
+document.getElementById('result').innerHTML = str;
+}
+
+function clickXY(){
+var x = window.event.clientX - getPic(mypic).x;
+var y = window.event.clientY - getPic(mypic).y;
+var str = "X:"+parseInt(x/3*2)+"\nY:"+parseInt(y/1);
+alert(str);
+
+}
+
+
+</script>
+
+<p>
+    <div style="font-size: 16px">使用浏览器缩放图片到合适尺寸</div>
+</p>
+<p>
+    <div id="result" style="font-size: 16px">坐标</div>
+</p>
+
+<div style="padding-left:10px" ><img id="mypic" src="map_zones_andian.bmp" onmousemove="getMousePositionOnImage(event,'result',3/2,1)"
+
+onclick="clickXY()" width="600" height="400"></div>
+
+<p>
+    <div id="result2" style="font-size: 16px">坐标</div>
+</p>
+<div style="padding-left:10px" ><img id="mypic2" src="map_zones_unknow2.bmp" onmousemove="getMousePositionOnImage(event,'result2',3,2)"
+onclick="clickOnImage(event,3,2)" width="600" height="400"></div>
+</body>
+
+</html>

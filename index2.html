@@ -1,0 +1,321 @@
+<!DOCTYPE html><html><head>
+<style>
+body {
+    font-family: Georgia, serif;
+    color: #101096;
+    padding: 0;
+    margin-left: 150;
+}
+.content {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-width: 20em;
+}
+header {
+    background-color: #7dd8d6;
+    padding: .5em 1em;
+}
+main {
+    background-color: #66FFB2;
+    width: 100%;
+    box-sizing: border-box;
+    order: 2;
+    padding: .5em;
+}
+.left,
+.right {
+    background-color: #49b4e7;
+    box-sizing: border-box;
+    padding: .5em;
+    margin: 0;
+    width: 100%;
+}
+.left {
+    order: 1;
+}
+.right {
+    order: 3
+}
+.left ul {
+    list-style: none;
+    padding: 0;
+}
+.left li {
+    padding: .2em;
+    display: inline-block;
+}
+footer {
+    background-color: #7dd8d6;
+    padding: .5em;
+    clear: both;
+    margin: 0;
+}
+@media screen and (min-width: 700px) {
+    .content {
+        display: block;
+        height: calc(100vh - 8em);
+        overflow-y: hidden;
+        margin: 0;
+    }
+    main {
+        position: relative;
+        float: left;
+        width: 100%;
+        padding: .2em 13.5em;
+        height: 100%;
+    }
+    .left {
+        position: relative;
+        float: left;
+        margin-left: -100%;
+        width: 12.5em;
+        height: 100%;
+    }
+    .right {
+        position: relative;
+        float: right;
+        margin-left: -100%;
+        width: 12.5em;
+        height: 100%;
+    }
+    .left li {
+        display: block;
+    }
+    header {
+        height: 6em;
+    }
+    footer {
+        height: 2em;
+    }
+}
+</style>
+</head>
+<body>
+<script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script><html>
+
+<head>
+    <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
+    <script>
+        // 初始化
+        //var vConsole = new VConsole();
+        //console.log('Hello world');
+    </script>
+    <meta charset="UTF-8">
+    <title>独行地图刷新计算器</title>
+</head>
+
+<body style="background-color:#C0C0C0">
+    <p>
+        <a href="http://150o.com/" target="_blank">实在传奇主页http://150o.com/下载游戏</a>
+    </p>
+    <p>
+        <a href="https://docs.qq.com/sheet/DTGlOakpWZWt5WkFF?tab=BB08J2" target="_blank">2022年11月10日实在角色等级表</a>
+    </p>
+    <p>
+        <div>------------------------</div>
+    </p>
+
+    <p>
+        <div id="time"></div>
+    </p>
+
+
+    <p>
+        <input type="submit" id="id_result_button" name="result_button" class="" value="怪物刷新立刻点击记录当前时间" onClick="make_ctime();">
+    </p>
+    <p>
+        记录刷新时间
+        <input type="text" name="tv_time" id="id_tv_time" class="" text="111" value="111"> 时间格式: 2022-11-1 17:21:38
+    </p>
+    <p>选择地图刷新间隔时间：（有谁知道其他地图的刷新间隔时间，请告诉我）
+        <p>
+            <input type="radio" value="520" name="select_time" checked="true">520秒 祖玛7层 赤月（老魔） 蜈蚣洞（恐怖、东一）猪洞(猪5好像是515s的样子)
+        </p>
+        <p>
+            <input type="radio" value="1040" name="select_time">1040秒 祖玛教主之家 赤月（山谷秘道、抉择、右回廊等） 猪洞(猪4 ) 蜈蚣洞（地牢北2)
+        </p>
+        <p>
+            <input type="radio" value="1560" name="select_time">1560秒 连接通道 香石墓穴
+        </p>
+        <p>
+            <input type="radio" value="0" name="select_time">
+            <input type="text" id="custom_time" value="0">自定义(秒)
+        </p>
+    </p>
+    <p>
+        <input type="submit" id="id_result_button" name="result_button" class="" value="点击计算下次刷新时间（内容复制到剪切板）" onClick="jisuan();">
+    </p>
+    <p>
+        刷新时间:
+        <div id="result" value="查询" style="color: red;"></div>
+        <input type="submit" id="id_result_next_button" name="result_name_button" class="" value="已刷新计算下次" onClick="jisuan_next();">
+    </p>
+
+    <p>
+        <div>------------------------</div>
+    </p>
+    <p>
+        <a href="https://t.bilibili.com/710058111115722768" target="_blank" style="color: red;">实在传奇入坑必读之封号雷区</a>
+    </p>
+
+    <p>
+        <div>------------------------</div>
+    </p>
+    <div style="float: left; display: inline-block;">
+        <a href="map_all.html" target="_blank">大地图跑路</a>
+        <a href="map_biqi.html" target="_blank">骷髅僵尸不迷路</a>
+        <a href="map_wm.html" target="_blank">沃玛不迷路</a>
+        <a href="map_wgd.html" target="_blank">蜈蚣洞不迷路</a>
+        <a href="map_smz.html" target="_blank">石墓阵不迷路</a>
+        <a href="map_zm.html" target="_blank">祖玛不迷路</a>
+        <a href="map_cyxg.html" target="_blank">赤月峡谷不迷路</a>
+        <div>
+            <p>
+                <div>----------实在专属副本(没有骷髅副本的)--------------</div>
+            </p>
+            <div style="float: left; display: inline-block;">
+                <a href="map_zones_andian.html" target="_blank">1.山洞(未知暗殿)不迷路</a>
+                <a href="map_zones_jiangshi.html" target="_blank">2.僵尸副本不迷路</a>
+                <a href="map_zones_wugong.html" target="_blank">3.蜈蚣(地牢)副本不迷路</a>
+                <a href="map_zones_duojiao.html" target="_blank">4.多角副本不迷路</a>
+                <a href="map_zones_shouren.html" target="_blank">5.兽人副本不迷路</a>
+                <a href="map_zones_woma.html" target="_blank">6.沃玛副本不迷路</a>
+                <a href="map_zones_shimu.html" target="_blank">7.石墓副本不迷路</a>
+                <a href="map_zones_zm.html" target="_blank">8.祖玛副本不迷路</a>
+                <a href="map_zones_chiyue.html" target="_blank">9.赤月副本不迷路</a>
+                <div>
+                    <p>
+                        <div>------------------------</div>
+                    </p>
+                    <div style="float: left; display: inline-block;">
+                        <a href="role_zhanshi.html" target="_blank">1.战士属性表</a>
+                        <a href="role_daoshi.html" target="_blank">2.道士属性表</a>
+                        <a href="role_fashi.html" target="_blank">3.法师属性表</a>
+                        <a href="fashibb.html" target="_blank">4.法师常用宝宝</a>
+                        <div>
+
+                            <p>
+                                <div>------------------------</div>
+                            </p>
+                            <p>
+                                <div>------------------------</div>
+                            </p>
+                            <p>
+                                <a href="https://docs.qq.com/sheet/DTGVkQlFKbm9oUk9T" target="_blank">原始怪物数据</a>
+                            </p>
+
+                            <p>
+                                <a href="https://docs.qq.com/doc/DTGpremNPRW1oVW1C" target="_blank">实在传奇—命运武器任务详细流程</a>
+                            </p>
+
+
+                            <p>
+                                <a href="https://zhuanlan.zhihu.com/p/141415234" target="_blank">《热血传奇》深度解读系列（6）：法师技能解读（上）</a>
+                            </p>
+
+                            <p>
+                                <a href="https://zhuanlan.zhihu.com/p/143170527" target="_blank">《热血传奇》深度解读系列（6）：法师技能解读（下）</a>
+                            </p>
+
+
+                            <div>BOSS、物品补丁下载复制粘贴到浏览器打开野外的网盘 http://yewai.ysepan.com/</div>
+</body>
+
+</html>
+<script>
+var re_time; //记录刷新时间
+
+
+function jisuan() {
+    var rtime
+    re_time = document.getElementById("id_tv_time").value
+    rtime = new Date(re_time)
+    rtime.setTime(rtime.getTime() + getmaptime())
+
+    ctime = new Date(rtime.getTime() - new Date().getTime() - 2 * 1000) / 1000
+    var str = "下次刷新时间约为" + rtime.toLocaleString().split('/').join('-') + "距离刷新还有" + ctime + "秒";
+    document.getElementById('result').innerHTML = str
+    copy(str)
+}
+
+function jisuan_next() {
+    var rtime
+    re_time = document.getElementById("id_tv_time").value
+    rtime = new Date(re_time)
+    rtime.setTime(rtime.getTime() + getmaptime())
+    ctime = new Date(rtime.getTime() - new Date().getTime() - 2 * 1000) / 1000
+    if (ctime <= 0) {
+        document.getElementById('id_tv_time').value = rtime.toLocaleString().split('/').join('-')
+    }
+    jisuan()
+}
+
+function getmaptime() {
+    var sec = 520
+    var rdgrop = document.getElementsByName("select_time")
+    for (let i = 0; i < rdgrop.length; i++) {
+        if (rdgrop[i].checked && rdgrop[i].value > 0) {
+            sec = rdgrop[i].value
+            return sec * 1000
+        } else if (rdgrop[i].checked) {
+            sec = document.getElementById("custom_time").value
+            return sec * 1000
+        }
+    }
+
+    return sec * 1000
+}
+
+function make_ctime() {
+    document.getElementById('id_tv_time').value = getDate();
+
+}
+
+function getDate() {
+
+    window.setTimeout(function() {
+        window.requestAnimationFrame(getDate)
+    }, 1000 / 2)
+    var d = new Date();
+    var year = d.getFullYear() //获取年
+    var month = d.getMonth() + 1; //获取月，从 Date 对象返回月份 (0 ~ 11)，故在此处+1
+    var day = d.getDay() //获取日
+    var days = d.getDate() //获取日期
+    var hour = d.getHours() //获取小时
+    var minute = d.getMinutes() //获取分钟
+    var second = d.getSeconds() //获取秒 +
+    if (month < 10) month = "0" + month
+    if (days < 10) days = "0" + days
+    if (hour < 10) hour = "0" + hour
+    if (minute < 10) minute = "0" + minute
+    if (second < 10) second = "0" + second
+    var week = new Array("星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六")
+    var da = year + "-" + month + "-" + days + " " + hour + ":" + minute + ":" + second
+    return da
+}
+
+function copy(text) {
+    // text是复制文本
+    // 创建input元素
+    const el = document.createElement('input')
+        // 给input元素赋值需要复制的文本
+    el.setAttribute('value', text)
+        // 将input元素插入页面
+    document.body.appendChild(el)
+        // 选中input元素的文本
+    el.select()
+        // 复制内容到剪贴板
+    document.execCommand('copy')
+        // 删除input元素
+    document.body.removeChild(el)
+}
+
+
+document.getElementById('time').innerHTML = getDate();
+document.getElementById('id_tv_time').value = getDate();
+setInterval("document.getElementById('time').innerHTML = getDate();", 1000);
+</script>
+
+</body>
+</html>

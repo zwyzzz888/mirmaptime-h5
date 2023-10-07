@@ -1,0 +1,58 @@
+<html>
+
+<body>
+ <title>多角副本不迷路</title>
+<script language="javascript">
+
+function getPic(htmlObj){
+
+var zb = {x:0,y:0}
+
+do{
+
+zb.x += htmlObj.offsetLeft
+
+zb.y += htmlObj.offsetTop
+
+htmlObj = htmlObj.offsetParent
+
+}   
+
+while(htmlObj)
+
+return zb
+
+}
+
+function getXY(){
+
+var x = window.event.clientX - getPic(mypic).x;
+var y = window.event.clientY - getPic(mypic).y;
+var str = "X:"+parseInt(x/6)+"\nY:"+parseInt(y/4);
+document.getElementById('result').innerHTML = str;
+}
+
+function clickXY(){
+var x = window.event.clientX - getPic(mypic).x;
+var y = window.event.clientY - getPic(mypic).y;
+var str = "X:"+parseInt(x/6)+"\nY:"+parseInt(y/4);
+alert(str);
+
+}
+
+</script>
+
+<p>
+    <div style="font-size: 16px">使用浏览器缩放图片到合适尺寸</div>
+</p>
+<p>
+    <div id="result" style="font-size: 16px">坐标</div>
+</p>
+
+<div style="padding-left:10px" ><img id=mypic src="map_zones_duojiao.bmp" onmousemove="getXY()"
+
+onclick="clickXY()" width="600" height="400"></div>
+
+</body>
+
+</html>
