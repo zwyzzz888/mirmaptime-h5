@@ -1,118 +1,90 @@
-<!DOCTYPE html><html><head>
-<style>
-/* 设置段落字体颜色和字号 */
-
-p {
-    color: #333;
-    font-size: 16px;
-}
-/* 设置标题字体颜色和字号 */
-
-h1,
-h2,
-h3 {
-    color: #666;
-    font-size: 24px;
-}
-/* 设置链接样式 */
-
-a {
-    text-decoration: none;
-    color: #007bff;
-    border-bottom: 1px solid #007bff;
-}
-/* 设置表格样式 */
-
-table {
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-td,
-th {
-    padding: 8px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-/* 设置页面背景颜色 */
-
-body {
-    background-color: #f5f5f5;
-}
-</style>
-</head>
-<body>
-<script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script><html>
-
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-    <script src="https://cdn.bootcss.com/vConsole/3.3.4/vconsole.min.js"></script>
-    <script>
-        // 初始化
-        //var vConsole = new VConsole();
-        //console.log('Hello world');
-    </script>
     <meta charset="UTF-8">
     <title>实在资料站</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- 引入外部 JS 文件 -->
+    <script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script>
+    <script src="js/time_mir2.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/vconsole@3.3.4/dist/vconsole.min.js"></script>
+    <script>
+        // // 初始化 vConsole（调试用）
+        var vConsole = new VConsole();
+        console.log('Hello world');
+    </script>
 </head>
+<body style="background-color:#ffffff">
+    <div class="container">
+        <h2 style="text-align: center;">实在资料站</h2>
+        <p>
+            <a href="http://www.150o.com/" target="_blank">实在传奇主页 http://www.150o.com/ 下载游戏 独行水友群680311725</a>
+        </p>
 
-<body style="background-color:#C0C0C0">
-    <p>
-        <a href="http://www.150o.com/" target="_blank">实在传奇主页http://www.150o.com/下载游戏 飞雷神水友群710064880 独行水友群680311725</a>
-    </p>
-    <p>
-       <!--  <a href="https://docs.qq.com/sheet/DTGlOakpWZWt5WkFF?tab=BB08J2" target="_blank">2022年12月11日实在角色等级表</a> -->
-    </p>
-    <p>
-        <div>------------------------</div>
-    </p>
+        <div id="time"></div>
 
-   
-    <p>
-        <a href="https://t.bilibili.com/710058111115722768" target="_blank" style="color: red;">实在传奇入坑必读之封号雷区</a>
-    </p>
+        <div style="background-color: #eef5f8; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p>
+                <input type="submit" id="id_result_button" name="result_button" value="怪物刷新立刻点击记录当前时间" onClick="make_ctime();">
+            </p>
+            <p>
+                <label>记录刷新时间：</label>
+                <input type="text" name="tv_time" id="id_tv_time" value="111">
+                <span style="font-size: 12px; color: #eef5f8;">时间格式: 2022-11-1 17:21:38</span>
+            </p>
+        </div>
 
-    <p>
-        <div>------------------------</div>
-    </p>
- 
-                    <div>----------实在专属副本活动地图--------------</div>
-                </p>
-                <a href="map_ygbq.html" target="_blank">1.远古比奇不迷路</a>
-                <p>
-                    <a href="https://docs.qq.com/doc/DTGFoVUZaZE52WEZC" target="_blank">2.蛇谷金蛇流程不迷路</a>
-                </p>
-                <a href="map_txdy.html" target="_blank">3.天下第一关不迷路</a>
-                <p>
-                </p>
-                <a href="map_fox.html" target="_blank">4.狐狸洞不迷路</a>
-                <p>
-                    <div>------------------------</div>
-                </p>
-               
+        <div style="background-color: #eef5f8; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p><strong>选择地图刷新间隔时间：</strong><small>（有谁知道其他地图的刷新间隔时间，请告诉我）</small></p>
+            <p>
+                <label><input type="radio" value="505" name="select_time" checked="true">505秒 祖玛7层 赤月（老魔） 蜈蚣洞（恐怖、东一）猪洞(猪5)</label>
+            </p>
+            <p>
+                <label><input type="radio" value="1005" name="select_time">1005秒 祖玛教主之家 赤月（山谷秘道、抉择、右回廊等） 猪洞(猪4 ) 蜈蚣洞（地牢北2)</label>
+            </p>
+            <p>
+                <label><input type="radio" value="1505" name="select_time">1505秒 连接通道 香石墓穴</label>
+            </p>
+            <p>
+                <label><input type="radio" value="0" name="select_time">自定义：<input type="text" id="custom_time" value="0">(秒)</label>
+            </p>
 
-                        <p>
-                            <div>------------------------</div>
-                        </p>
-                        <p>
-                            <div>------------------------</div>
-                        </p>
+            <p>
+                <input type="submit" id="id_result_button" name="result_button" value="点击计算下次刷新时间（内容复制到剪切板）" onClick="jisuan_Chinese();">
+            </p>
 
-                        <a href="https://docs.qq.com/sheet/DTFBPVnJoem93SkxS?tab=BB08J2" target="_blank">实在药品配方</a>
-                        </p>
+            <p>
+                <strong>刷新时间:</strong>
+                <div id="result" value="查询"></div>
+                <input type="submit" id="id_result_next_button" name="result_name_button" value="已刷新计算下次" onClick="jisuan_nextChinese();">
+            </p>
+        </div>
+    </div>
 
-                        <p>
-                            <a href="https://docs.qq.com/doc/DTGpremNPRW1oVW1C" target="_blank">实在传奇—命运武器任务详细流程(飞雷神)</a>
-                        </p>
+    <div class="container">
+        <h3>实在专属副本活动地图</h3>
+        <ul>
+            <li><a href="map_ygbq.html" target="_blank">1.远古比奇不迷路</a></li>
+            <li><a href="https://docs.qq.com/doc/DTGFoVUZaZE52WEZC" target="_blank">2.蛇谷金蛇流程不迷路</a></li>
+            <li><a href="map_txdy.html" target="_blank">3.天下第一关不迷路</a></li>
+            <li><a href="map_fox.html" target="_blank">4.狐狸洞不迷路</a></li>
+        </ul>
+    </div>
 
-                        <p>
-                            <div>--------------下载相关--------------</div>
-                        </p>
-                        <p>
-                            <a href="https://www.123pan.com/s/UoC0Vv-95Tl3.html" target="_blank">实在整合版2023年7月24日(密码123) 觉得不错老板可以打赏下^(*￣(oo)￣)^</a>
-                        </p>
+    <div class="container">
+        <h3>资料相关</h3>
+        <ul>
+            <li><a href="https://docs.qq.com/sheet/DTFBPVnJoem93SkxS?tab=BB08J2" target="_blank">实在药品配方</a></li>
+            <li><a href="https://docs.qq.com/doc/DTGpremNPRW1oVW1C" target="_blank">实在传奇—命运武器任务详细流程(飞雷神)</a></li>
+        </ul>
+    </div>
 
+    <div class="container">
+        <h3>下载相关</h3>
+        <ul>
+            <li><a href="https://www.123pan.com/s/UoC0Vv-95Tl3.html" target="_blank">实在整合版2023年7月24日(密码123) 觉得不错老板可以打赏下^(*￣(oo)￣)^</a></li>
+        </ul>
+    </div>
 </body>
 
-</html>
-
-</body>
 </html>
