@@ -1,6 +1,6 @@
 
 // 定义请求的URL和参数
-const url = 'https://api.yesapi.net/api/SVIP/Szwyzzz888_MyApi/AUpdateMir2logincount&yesapi_allow_origin=1';
+const url = 'https://api.yesapi.net/?&s=SVIP.Szwyzzz888_MyApi.AUpdateMir2logincount&yesapi_allow_origin=1';
 
 const postData = {
   app_key: "C9D0523F019B3D49CF0D62F5CDCDF60F",
@@ -58,7 +58,7 @@ postData.info = navigator.userAgent;
   console.log('Post Data:', postData);
 
   // 发起POST请求
-  HTTPRequest.post(url, postData)
+  HTTPRequest.get(url, postData)
     .then(response => {
       console.log('请求成功，返回数据:', response);
     })
