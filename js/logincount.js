@@ -1,7 +1,7 @@
 
 
 // 定义请求的URL和参数
-const url = 'http://supplier.api.yesapi.cn/api/SVIP/Szwyzzz888_MyApiSandbox/AUpdateMir2logincount';
+const url = 'https://supplier.api.yesapi.cn/api/SVIP/Szwyzzz888_MyApiSandbox/AUpdateMir2logincount';
 
 const postData = {
   app_key: "C9D0523F019B3D49CF0D62F5CDCDF60F",
@@ -34,7 +34,7 @@ postData.logintime = Math.floor(Date.now() / 1000);
 // 使用 fetch 获取外网 IP
 async function getPublicIP() {
   try {
-    const response = await fetch('http://ipecho.net/plain');
+    const response = await fetch('https://ipecho.net/plain');
     const data = await response.text();
     return data; // 返回外网 IP
   } catch (error) {
