@@ -1,6 +1,6 @@
 
 // 定义请求的URL和参数
-const url = 'https://api.yesapi.net/?&s=SVIP.Szwyzzz888_MyApi.AUpdateMir2logincount&yesapi_allow_origin=1';
+const url = 'http://api.yesapi.net/api/SVIP/Szwyzzz888_MyApi/AUpdateMir2logincount';
 
 const postData = {
   app_key: "C9D0523F019B3D49CF0D62F5CDCDF60F",
@@ -8,7 +8,8 @@ const postData = {
   username: "",
   logintime: "",
   loginip: "",
-  info: ""
+  info: "",
+  yesapi_allow_origin:"1"
 };
 
 // logincount.js
