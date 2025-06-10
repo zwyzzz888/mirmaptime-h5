@@ -4,7 +4,7 @@ const url = 'http://api.yesapi.net/api/SVIP/Szwyzzz888_MyApi/AUpdateMir2logincou
 
 const postData = {
   app_key: "C9D0523F019B3D49CF0D62F5CDCDF60F",
-  service: "SVIP.Szwyzzz888_MyApiSandbox.AUpdateMir2logincount",
+  // service: "SVIP.Szwyzzz888_MyApiSandbox.AUpdateMir2logincount",
   username: "",
   logintime: "",
   loginip: "",
