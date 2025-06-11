@@ -1,63 +1,77 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>麻辣小鱼mir2资料站</title>
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script>
     <script src="https://unpkg.com/vconsole@3.3.4/dist/vconsole.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script>
         // 初始化
         //var vConsole = new VConsole();
         //console.log('Hello world');
     </script>
     <script src="js/time_mir2.js" type="text/javascript"></script>
+
     <script src="js/httpRequest.js"></script>
     <script src="js/logincount.js"></script>
+
 <body>
     <div class="container">
         <h2 style="text-align: center;">麻辣小鱼mir2资料站</h2>
-        
+        <div id="visitor-count-container">
+            <strong>当前总访问量：</strong>
+            <span id="visitor-count">加载中...</span>
+        </div>
         <div id="time"></div>
-        
+
+
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p>
-                <input type="submit" id="id_result_button" name="result_button" class="" value="怪物刷新立刻点击记录当前时间" onClick="make_ctime();">
+                <input type="submit" id="id_result_button" name="result_button" class="" value="怪物刷新立刻点击记录当前时间"
+                    onClick="make_ctime();">
             </p>
             <p>
                 <label>记录刷新时间：</label>
-                <input type="text" name="tv_time" id="id_tv_time" class="" text="111" value="111"> 
+                <input type="text" name="tv_time" id="id_tv_time" class="" text="111" value="111">
                 <span style="font-size: 12px; color: #7f8c8d;">时间格式: 2022-11-1 17:21:38</span>
             </p>
         </div>
-        
+
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;">
             <p><strong>选择地图刷新间隔时间：</strong><small>（有谁知道其他地图的刷新间隔时间，请告诉我）</small></p>
             <p>
-                <label><input type="radio" value="505" name="select_time" checked="true">505秒 祖玛7层 赤月（老魔） 蜈蚣洞（恐怖、东一）猪洞(猪5)</label>
+                <label><input type="radio" value="505" name="select_time" checked="true">505秒 祖玛7层 赤月（老魔）
+                    蜈蚣洞（恐怖、东一）猪洞(猪5)</label>
             </p>
             <p>
-                <label><input type="radio" value="1005" name="select_time">1005秒 祖玛教主之家 赤月（山谷秘道、抉择、右回廊等） 猪洞(猪4 ) 蜈蚣洞（地牢北2)</label>
+                <label><input type="radio" value="1005" name="select_time">1005秒 祖玛教主之家 赤月（山谷秘道、抉择、右回廊等） 猪洞(猪4 )
+                    蜈蚣洞（地牢北2)</label>
             </p>
             <p>
                 <label><input type="radio" value="1505" name="select_time">1505秒 连接通道 香石墓穴</label>
             </p>
             <p>
-                <label><input type="radio" value="0" name="select_time">自定义：<input type="text" id="custom_time" value="0">(秒)</label>
+                <label><input type="radio" value="0" name="select_time">自定义：<input type="text" id="custom_time"
+                        value="0">(秒)</label>
             </p>
-            
+
             <p>
-                <input type="submit" id="id_result_button" name="result_button" class="" value="点击计算下次刷新时间（内容复制到剪切板）" onClick="jisuan();">
+                <input type="submit" id="id_result_button" name="result_button" class="" value="点击计算下次刷新时间（内容复制到剪切板）"
+                    onClick="jisuan();">
             </p>
-            
+
             <p>
                 <strong>刷新时间:</strong>
-                <div id="result" value="查询"></div>
-                <input type="submit" id="id_result_next_button" name="result_name_button" class="" value="已刷新计算下次" onClick="jisuan_next();">
+            <div id="result" value="查询"></div>
+            <input type="submit" id="id_result_next_button" name="result_name_button" class="" value="已刷新计算下次"
+                onClick="jisuan_next();">
             </p>
         </div>
     </div>
-    
+
     <div class="container">
         <h3>跑路不迷路</h3>
         <table>
@@ -74,7 +88,7 @@
             </tr>
         </table>
     </div>
-    
+
     <div class="container">
         <h3>一些副本</h3>
         <table>
@@ -94,7 +108,7 @@
             </tr>
         </table>
     </div>
-    
+
     <div class="container">
         <h3>职业属性表</h3>
         <table>
@@ -103,13 +117,13 @@
                 <td><a href="role_daoshi.html" target="_blank">2.道士属性表</a></td>
                 <td><a href="role_fashi.html" target="_blank">3.法师属性表</a></td>
             </tr>
-             <tr>
+            <tr>
                 <td><a href="fashibb.html" target="_blank">4.法师常用宝宝</a></td>
                 <td><a href="role_skill.html" target="_blank">5. 1.50各职业技能表</a></td>
             </tr>
         </table>
     </div>
-    
+
     <div class="container">
         <h3>资料相关</h3>
         <ul style="list-style-type: none; padding-left: 0;">
@@ -124,16 +138,18 @@
             <li><a href="shizai.html" target="_blank">实在服专属资料</a></li>
         </ul>
     </div>
-    
+
     <div class="container">
         <h3>下载相关</h3>
         <ul style="list-style-type: none; padding-left: 0;">
             <li><a href="http://yewai.ysepan.com" target="_blank">BOSS、物品补丁下载 一</a></li>
             <li><a href="http://ruchu888.ysepan.com" target="_blank">BOSS、物品补丁下载 二</a></li>
-            <li><a href="https://www.123865.com/s/UoC0Vv-yC9l3" target="_blank">1.50复古传奇声音Wav文件原文件的30%(覆盖Wav文件即可) 下载</a></li>
+            <li><a href="https://www.123865.com/s/UoC0Vv-yC9l3" target="_blank">1.50复古传奇声音Wav文件原文件的30%(覆盖Wav文件即可) 下载</a>
+            </li>
         </ul>
     </div>
 
 
 </body>
+
 </html>

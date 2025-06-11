@@ -140,3 +140,12 @@ tr:hover {
         overflow-x: auto;
     }
 }
+
+#visitor-count-container {
+    padding: 15px;
+    border-radius: 5px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}

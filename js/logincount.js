@@ -1,6 +1,6 @@
 
 // 定义请求的URL和参数
-const url = 'https://mir2.malafish.cn/okayapi.php';
+const url = 'https://api.yesapi.net/api/SVIP/Szwyzzz888_MyApi/AUpdateMir2logincount';
 
 const postData = {
   app_key: "C9D0523F019B3D49CF0D62F5CDCDF60F",
@@ -28,7 +28,7 @@ function getDeviceId() {
   return deviceId;
 }
 
-postData.username= getDeviceId()
+postData.username= getDeviceId().substring(0, 30)
 postData.logintime = Math.floor(Date.now() / 1000);
 
 // 使用 fetch 获取外网 IP
@@ -58,14 +58,26 @@ postData.info = navigator.userAgent;
 
   console.log('Post Data:', postData);
 
-  // 发起POST请求
-  HTTPRequest.get(url, postData)
-    .then(response => {
-      console.log('请求成功，返回数据:', response);
-    })
-    .catch(error => {
-      console.error('POST请求失败:', error);
-    });
+  // 发起 JSONP 请求
+  $.ajax({
+    url: url,
+    dataType: 'jsonp',
+    jsonpCallback: 'onCallback', // 回调函数名称
+    data: postData,
+    cache: true
+  }).fail(function(jqXHR, textStatus, errorThrown) {
+    console.error('JSONP 请求失败:', textStatus, errorThrown);
+  });
 })();
 
+
+function onCallback(rs) {
+  console.log("收到接口响应:", rs);
+
+  if (rs && rs.ret === 200 && rs.data && rs.data.total !== undefined) {
+    document.getElementById('visitor-count').innerText = rs.data.total;
+  } else {
+    document.getElementById('visitor-count').innerText = '获取失败';
+  }
+}
 
