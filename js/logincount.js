@@ -1,6 +1,6 @@
 
 // 定义请求的URL和参数
-const url = 'http://localhost/okayapi.php?';
+const url = 'https://mir2.malafish.cn/okayapi.php';
 
 const postData = {
   app_key: "C9D0523F019B3D49CF0D62F5CDCDF60F",
