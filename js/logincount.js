@@ -27,8 +27,8 @@ function getDeviceId() {
   }
   return deviceId;
 }
-
-postData.username= getDeviceId().substring(0, 30)
+//数据库长度只有30位 只能取30位
+postData.username= getDeviceId().substring(0, 30) 
 postData.logintime = Math.floor(Date.now() / 1000);
 
 // 使用 fetch 获取外网 IP  ipecho.net 允许跨域所以可以直接访问
@@ -36,7 +36,7 @@ async function getPublicIP() {
   try {
     const response = await fetch('https://ipecho.net/plain');
     const data = await response.text();
-    return data; // 返回外网 IP
+    return data.substring(0, 20); // 返回外网 IP
   } catch (error) {
     console.error('无法获取外网 IP:', error);
     return null;
@@ -45,7 +45,7 @@ async function getPublicIP() {
 
 // 设置 loginip 到 postData
 async function setLoginIP() {
-  postData.loginip = await getPublicIP().substring(0, 20); // 将外网 IP 赋值给 loginip
+  postData.loginip = await getPublicIP(); // 将外网 IP 赋值给 loginip  因为数据库只有20位
   // console.log('登录 IP:', postData.loginip);
   // 后续可以将 postData 发送到服务器
 }
