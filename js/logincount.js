@@ -31,7 +31,7 @@ function getDeviceId() {
 postData.username= getDeviceId().substring(0, 30)
 postData.logintime = Math.floor(Date.now() / 1000);
 
-// 使用 fetch 获取外网 IP
+// 使用 fetch 获取外网 IP  ipecho.net 允许跨域所以可以直接访问
 async function getPublicIP() {
   try {
     const response = await fetch('https://ipecho.net/plain');
@@ -45,8 +45,8 @@ async function getPublicIP() {
 
 // 设置 loginip 到 postData
 async function setLoginIP() {
-  postData.loginip = await getPublicIP(); // 将外网 IP 赋值给 loginip
-  console.log('登录 IP:', postData.loginip);
+  postData.loginip = await getPublicIP().substring(0, 20); // 将外网 IP 赋值给 loginip
+  // console.log('登录 IP:', postData.loginip);
   // 后续可以将 postData 发送到服务器
 }
 
@@ -58,7 +58,7 @@ postData.info = navigator.userAgent;
 
   console.log('Post Data:', postData);
 
-  // 发起 JSONP 请求
+  // 发起 JSONP 请求  因为跨域问题  只能用ajax
   $.ajax({
     url: url,
     dataType: 'jsonp',
@@ -72,7 +72,7 @@ postData.info = navigator.userAgent;
 
 
 function onCallback(rs) {
-  console.log("收到接口响应:", rs);
+  // console.log("收到接口响应:", rs);
 
   if (rs && rs.ret === 200 && rs.data && rs.data.total !== undefined) {
     document.getElementById('visitor-count').innerText = rs.data.total;
