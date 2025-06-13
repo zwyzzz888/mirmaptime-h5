@@ -124,7 +124,8 @@ function copy(text) {
         console.log('已使用 execCommand 复制');
     }
 }
-
+let blinkInterval = null; // 存储定时器 ID
+let isRed = false;
 function count_retime() {
     if (re_time != null) {
         var rtime;
@@ -133,6 +134,31 @@ function count_retime() {
         ctime = new Date(rtime.getTime() - new Date().getTime() - 2 * 1000) / 1000;
         var str = "下次刷新时间约为" + getDate2(rtime) + "距离刷新还有" + parseInt(ctime) + "秒";
         document.getElementById('result').innerHTML = str;
+
+          // 获取页面最外层容器或 body
+          const pageContainer = document.body;
+
+          if (ctime <= 10) {
+              if (!blinkInterval) {
+                  // 开始闪烁
+                 
+
+                      if (isRed) {
+                          pageContainer.classList.remove('bg-red');
+                          pageContainer.classList.add('bg-white');
+                      } else {
+                          pageContainer.classList.remove('bg-white');
+                          pageContainer.classList.add('bg-red');
+                      }
+                      isRed = !isRed;
+              }
+          } else {
+                // 恢复默认背景色
+                pageContainer.classList.remove('bg-red', 'bg-white');
+                // 如果你想恢复为某个特定颜色，可以设置：
+                // pageContainer.style.backgroundColor = "#f8f9fa"; // 示例颜色
+              
+          }
     }
 }
 

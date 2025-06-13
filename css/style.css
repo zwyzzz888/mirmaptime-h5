@@ -149,3 +149,11 @@ tr:hover {
     max-width: 600px;
     text-align: center;
 }
+
+/* 闪烁背景颜色 */
+.bg-red {
+    background-color: #ff4d4d !important;
+}
+.bg-white {
+    background-color: #ffffff !important;
+}
