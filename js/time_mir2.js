@@ -124,7 +124,7 @@ function copy(text) {
         console.log('已使用 execCommand 复制');
     }
 }
-let blinkInterval = null; // 存储定时器 ID
+
 let isRed = false;
 function count_retime() {
     if (re_time != null) {
@@ -137,12 +137,8 @@ function count_retime() {
 
           // 获取页面最外层容器或 body
           const pageContainer = document.body;
-
-          if (ctime <= 10) {
-              if (!blinkInterval) {
-                  // 开始闪烁
-                 
-
+          if (ctime > -10 && ctime <= 15) {
+                  // 开始闪烁   
                       if (isRed) {
                           pageContainer.classList.remove('bg-red');
                           pageContainer.classList.add('bg-white');
@@ -151,7 +147,6 @@ function count_retime() {
                           pageContainer.classList.add('bg-red');
                       }
                       isRed = !isRed;
-              }
           } else {
                 // 恢复默认背景色
                 pageContainer.classList.remove('bg-red', 'bg-white');
