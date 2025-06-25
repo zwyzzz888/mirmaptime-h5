@@ -79,6 +79,7 @@ table {
     border-collapse: collapse;
     margin: 15px 0;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-size: 16px; /* 添加字体大小 */
 }
 
 th, td {
@@ -130,14 +131,19 @@ tr:hover {
     body {
         padding: 10px;
     }
-    
+
     .container {
         padding: 15px;
     }
-    
+
     table {
         display: block;
         overflow-x: auto;
+        font-size: 16px; /* 移动端表格字体大小 */
+    }
+
+    th, td {
+        font-size: 14px; /* 可根据需求调整 */
     }
 }
 
@@ -156,4 +162,34 @@ tr:hover {
 }
 .bg-white {
     background-color: #ffffff !important;
+}
+
+/* 弹窗样式 */
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  width: auto;
+  max-width: 90%;
+  text-align: center;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* 图片样式 */
+.popup .popup-img {
+  width: 150px; /* 固定宽度 */
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  object-fit: contain;
+  max-width: 90vw;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }

@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>麻辣小鱼mir2资料站</title>
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script>
@@ -18,7 +19,16 @@
     <script src="js/httpRequest.js"></script>
     <script src="js/logincount.js"></script>
 
+
 <body>
+    <!-- 弹窗 -->
+<div class="popup" id="popup">
+  <span id="closeBtn" style="position: absolute; top: -34px; right: -34px; cursor: pointer; font-size: 40px; color: #0e0d0d;">&times;</span>
+  <p>如果觉得有用，支付宝扫个红包支持一下吧^_^</p>
+  <img class="popup-img" src="http://cd7.okayapi.com/C9D0523F019B3D49CF0D62F5CDCDF60F_20250625114022_d0d39942a1e08614ef7b6578e87ec9fe.png" alt="二维码"
+  style="width: 200px; height: auto; display: block; margin: 0 auto;"
+  >
+</div>
     <div class="container">
         <h2 style="text-align: center;">麻辣小鱼mir2资料站</h2>
         <div id="visitor-count-container">
@@ -150,6 +160,25 @@
         </ul>
     </div>
 
+    <script>
+    // 页面加载完成后显示弹窗
+    window.onload = function () {
+    var popup = document.getElementById('popup');
+    if (popup) {
+        popup.style.display = 'block';
+        popup.style.top = '50%';
+        popup.style.left = '50%';
+        popup.style.transform = 'translate(-50%, -50%)';
+        popup.style.position = 'fixed';
+    }
+};
+
+    // 点击关闭按钮隐藏弹窗
+    document.getElementById('closeBtn') && document.getElementById('closeBtn').addEventListener('click', function () {
+    var popup = document.getElementById('popup');
+    if (popup) popup.style.display = 'none';
+});
+</script>
 
 </body>
 
