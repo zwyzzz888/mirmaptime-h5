@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
     <title>麻辣小鱼mir2资料站</title>
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script>
@@ -22,14 +23,14 @@
 
 <body>
     <!-- 弹窗 -->
-<div class="popup" id="popup">
-  <div class="popup-content"> <!-- 新增内容容器 -->
-    <p>如果觉得有用，支付宝扫个红包支持一下吧^_^</p>
-    <img src="http://cd7.okayapi.com/C9D0523F019B3D49CF0D62F5CDCDF60F_20250625114022_d0d39942a1e08614ef7b6578e87ec9fe.png" alt="二维码"
-      class="popup-img">
-    <span id="closeBtn">&times;</span>
-  </div>
-</div>
+    <div class="popup" id="popup">
+        <div class="popup-content"> <!-- 新增内容容器 -->
+            <p>如果觉得有用，支付宝扫个红包支持一下吧^_^</p>
+            <img src="http://cd7.okayapi.com/C9D0523F019B3D49CF0D62F5CDCDF60F_20250625114022_d0d39942a1e08614ef7b6578e87ec9fe.png"
+                alt="二维码" class="popup-img">
+            <span id="closeBtn">&times;</span>
+        </div>
+    </div>
     <div class="container">
         <h2 style="text-align: center;">麻辣小鱼mir2资料站</h2>
         <div id="visitor-count-container">
@@ -162,24 +163,38 @@
     </div>
 
     <script>
-    // 点击关闭按钮隐藏弹窗
-    document.getElementById('closeBtn') && document.getElementById('closeBtn').addEventListener('click', function () {
-        var popup = document.getElementById('popup');
-        if (popup) popup.style.display = 'none';
-    });
+        // 点击关闭按钮隐藏弹窗
+        document.getElementById('closeBtn') && document.getElementById('closeBtn').addEventListener('click', function () {
+            var popup = document.getElementById('popup');
+            if (popup) {
+                popup.style.display = 'none';
+                localStorage.setItem('popupShown', 'true'); // 用户关闭弹窗后标记为已显示
+            }
+        });
 
-    // 页面加载完成后显示弹窗
-    window.addEventListener('load', function () {
-        var popup = document.getElementById('popup');
-        if (popup) {
-            popup.style.display = 'block';
-            popup.style.top = '50%';
-            popup.style.left = '50%';
-            popup.style.transform = 'translate(-50%, -50%)';
-            popup.style.position = 'fixed';
-        }
-    });
-</script>
+        // 页面加载完成后显示弹窗
+        window.addEventListener('load', function () {
+            var popup = document.getElementById('popup');
+            if (popup) {
+                // 获取之前记录的时间戳
+                const popupShownTime = localStorage.getItem('popupShownTime');
+                const now = new Date().getTime();
+                const out_time = 2 * 60 * 60 * 1000; // 一天的毫秒数
+
+                // 判断是否超过 24 小时
+                if (!popupShownTime || now - popupShownTime > out_time) {
+                    popup.style.display = 'block';
+                    popup.style.top = '50%';
+                    popup.style.left = '50%';
+                    popup.style.transform = 'translate(-50%, -50%)';
+                    popup.style.position = 'fixed';
+
+                    // 更新最后一次显示时间
+                    localStorage.setItem('popupShownTime', now.toString());
+                }
+            }
+        });
+    </script>
 
 </body>
 
