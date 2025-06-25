@@ -186,9 +186,9 @@ function replaceNumbersToChinese(text) {
 }
 
 // 页面加载完成后执行初始化函数
-window.onload = function() {
+window.addEventListener('load', function() {
     document.getElementById('time').innerHTML = getDate();
     document.getElementById('id_tv_time').value = getDate();
     setInterval("document.getElementById('time').innerHTML = getDate();", 1000);
     setInterval(count_retime, 1000);
-};
+});
