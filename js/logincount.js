@@ -9,6 +9,7 @@ const postData = {
   logintime: "",
   loginip: "",
   info: "",
+  sourceType: "0",
   yesapi_allow_origin:"1"
 };
 
