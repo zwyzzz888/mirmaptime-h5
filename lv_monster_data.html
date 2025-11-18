@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>怪物经验衰减记录表</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            padding: 20px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 100%;
+            overflow: hidden;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 28px;
+        }
+        
+        .description {
+            color: #7f8c8d;
+            font-size: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 0.5;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            cursor: pointer;
+            min-width: 150px;
+        }
+        
+        .table-container {
+            position: relative;
+            overflow: auto;
+            max-height: 70vh;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: max-content;
+            min-width: 100%;
+        }
+        
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+            text-align: center;
+            white-space: nowrap;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            position: sticky;
+            z-index: 10;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        /* 冻结前三行 */
+        thead tr:nth-child(-n+3) th {
+            top: 0;
+            z-index: 20;
+            background-color: #f8f9fa;
+        }
+        
+        thead tr:nth-child(2) th {
+            top: 45px;
+            background-color: #e1f5fe;
+        }
+        
+        thead tr:nth-child(3) th {
+            top: 90px;
+            background-color: #e8f5e9;
+        }
+        
+        /* 确保固定行的边框始终可见 */
+        thead tr:nth-child(-n+3) th {
+            border-bottom: 1px solid #e0e0e0 !important;
+        }
+        
+        /* 冻结A列和B列 */
+        th:first-child, td:first-child,
+        th:nth-child(2), td:nth-child(2) {
+            position: sticky;
+            left: 0;
+            z-index: 15;
+            background-color: #f8f9fa;
+        }
+        
+        th:nth-child(2), td:nth-child(2) {
+            left: 80px;
+        }
+        
+        /* 特殊行样式 */
+        .header-row {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .level-row {
+            background-color: #e1f5fe;
+        }
+        
+        .base-exp-row {
+            background-color: #e8f5e9;
+        }
+        
+        /* 数据行样式 */
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tbody tr:hover {
+            background-color: #f0f8ff;
+        }
+        
+        /* 人物等级列特殊样式 */
+        .player-level {
+            background-color: #e3f2fd;
+            font-weight: bold;
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .filter-controls {
+                width: 100%;
+                flex-direction: column;
+            }
+            
+            select {
+                width: 100%;
+            }
+            
+            th, td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+            
+            thead tr:nth-child(2) th {
+                top: 35px;
+            }
+            
+            thead tr:nth-child(3) th {
+                top: 70px;
+            }
+        }
+        
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 14px;
+            padding-top: 15px;
+            border-top: 0px solid #eaeaea;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>怪物经验衰减记录表</h1>
+            <p class="description">此表格展示了不同人物等级下击杀各种怪物获得的经验值，经验值会随着人物等级与怪物等级差距增大而衰减</p>
+        </header>
+        
+        <div class="controls">
+            <div class="filter-controls">
+                <select id="levelFilter">
+                    <option value="all" selected >所有怪物等级</option>
+                    <option value="1-10">1-10级</option>
+                    <option value="11-20">11-20级</option>
+                    <option value="21-30">21-30级</option>
+                    <option value="31-40">31-40级</option>
+                    <option value="41-50">41-50级</option>
+                    <option value="51-60">51-60级</option>
+                </select>
+                <!-- <select id="typeFilter">
+                    <option value="all">所有怪物类型</option>
+                    <option value="普通">普通怪物</option>
+                    <option value="精英">精英怪物</option>
+                    <option value="BOSS">BOSS</option>
+                </select> -->
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table id="monsterTable">
+                <thead>
+                    <tr class="header-row">
+                        <th>人物等级</th>
+                        <th>怪物名称</th>
+                        <!-- 怪物名称列将通过JavaScript动态生成 -->
+                    </tr>
+                    <tr class="level-row">
+                        <th>--</th>
+                        <th>等级</th>
+                        <!-- 怪物等级数据将通过JavaScript动态生成 -->
+                    </tr>
+                    <tr class="base-exp-row">
+                        <th>--</th>
+                        <th>基础经验</th>
+                        <!-- 基础经验数据将通过JavaScript动态生成 -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 表格内容将通过JavaScript动态生成 -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>经验衰减公式：当人物等级与怪物等级差≥10时，经验值 = MAX(基础经验×(1-1/15×(等级差-10)), 1)</p>
+        </div>
+    </div>
+
+    <script>
+        // 怪物数据
+        const monsterData = [
+            { name: "鸡", level: 5, exp: 5, type: "普通" },
+            { name: "鹿", level: 12, exp: 15, type: "普通" },
+            { name: "稻草人", level: 10, exp: 12, type: "普通" },
+            { name: "多钩猫", level: 13, exp: 17, type: "普通" },
+            { name: "钉耙猫", level: 13, exp: 18, type: "普通" },
+            { name: "蛤蟆", level: 12, exp: 15, type: "普通" },
+            { name: "半兽人", level: 15, exp: 25, type: "普通" },
+            { name: "森林雪人", level: 16, exp: 30, type: "普通" },
+            { name: "毒蜘蛛", level: 17, exp: 42, type: "普通" },
+            { name: "食人花", level: 20, exp: 28, type: "普通" },
+            { name: "半兽战士", level: 21, exp: 90, type: "普通" },
+            { name: "半兽勇士", level: 28, exp: 300, type: "精英" },
+            { name: "红蛇", level: 17, exp: 50, type: "普通" },
+            { name: "虎蛇", level: 18, exp: 53, type: "普通" },
+            { name: "羊", level: 13, exp: 20, type: "普通" },
+            { name: "盔甲虫", level: 16, exp: 37, type: "普通" },
+            { name: "猎鹰", level: 16, exp: 38, type: "普通" },
+            { name: "沙虫", level: 17, exp: 54, type: "普通" },
+            { name: "威思而小虫", level: 16, exp: 42, type: "普通" },
+            { name: "多角虫", level: 16, exp: 32, type: "普通" },
+            { name: "巨型多角虫", level: 28, exp: 200, type: "精英" },
+            { name: "骷髅", level: 18, exp: 85, type: "普通" },
+            { name: "掷斧骷髅", level: 18, exp: 90, type: "普通" },
+            { name: "骷髅战士", level: 19, exp: 95, type: "普通" },
+            { name: "骷髅战将", level: 20, exp: 100, type: "普通" },
+            { name: "骷髅精灵", level: 40, exp: 500, type: "BOSS" },
+            { name: "洞蛆", level: 21, exp: 60, type: "普通" },
+            { name: "蝎子", level: 18, exp: 45, type: "普通" },
+            { name: "山洞蝙蝠", level: 20, exp: 25, type: "普通" },
+            { name: "僵尸", level: 25, exp: 160, type: "普通" },
+            { name: "电僵尸", level: 25, exp: 160, type: "普通" },
+            { name: "野尸王", level: 40, exp: 800, type: "BOSS" },
+            { name: "尸王殿尸王", level: 50, exp: 800, type: "BOSS" },
+            { name: "沃玛战士", level: 30, exp: 260, type: "普通" },
+            { name: "沃玛勇士", level: 30, exp: 280, type: "普通" },
+            { name: "沃玛战将", level: 30, exp: 280, type: "普通" },
+            { name: "火焰沃玛", level: 31, exp: 290, type: "普通" },
+            { name: "暗黑战士", level: 26, exp: 200, type: "普通" },
+            { name: "粪虫", level: 26, exp: 180, type: "普通" },
+            { name: "沃玛卫士", level: 50, exp: 1200, type: "精英" },
+            { name: "沃玛教主", level: 60, exp: 2500, type: "BOSS" },
+            { name: "蜈蚣", level: 26, exp: 230, type: "普通" },
+            { name: "跳跳蜂", level: 26, exp: 210, type: "普通" },
+            { name: "巨型蠕虫", level: 26, exp: 230, type: "普通" },
+            { name: "黑色恶蛆", level: 28, exp: 180, type: "普通" },
+            { name: "钳虫", level: 31, exp: 250, type: "普通" },
+            { name: "邪恶钳虫", level: 60, exp: 1400, type: "精英" },
+            { name: "触龙神", level: 60, exp: 2200, type: "BOSS" },
+            { name: "红野猪", level: 32, exp: 320, type: "普通" },
+            { name: "500红野猪", level: 40, exp: 320, type: "精英" },
+            { name: "黑野猪", level: 35, exp: 380, type: "普通" },
+            { name: "500黑野猪", level: 40, exp: 380, type: "精英" },
+            { name: "蝎蛇", level: 35, exp: 360, type: "普通" },
+            { name: "500蝎蛇", level: 40, exp: 360, type: "精英" },
+            { name: "楔蛾", level: 32, exp: 350, type: "普通" },
+            { name: "角蝇", level: 50, exp: 300, type: "普通" },
+            { name: "蝙蝠", level: 5, exp: 5, type: "普通" },
+            { name: "白野猪", level: 50, exp: 1600, type: "BOSS" },
+            { name: "邪恶毒蛇", level: 50, exp: 1800, type: "BOSS" },
+            { name: "大老鼠", level: 24, exp: 330, type: "普通" },
+            { name: "祖玛卫士", level: 43, exp: 480, type: "普通" },
+            { name: "1000祖玛卫士", level: 43, exp: 480, type: "精英" },
+            { name: "1400祖玛卫士", level: 50, exp: 2000, type: "精英" },
+            { name: "祖玛雕像", level: 42, exp: 450, type: "普通" },
+            { name: "900祖玛雕像", level: 42, exp: 450, type: "精英" },
+            { name: "祖玛弓箭手", level: 40, exp: 370, type: "普通" },
+            { name: "800祖玛弓箭手", level: 40, exp: 370, type: "精英" },
+            { name: "祖玛教主", level: 60, exp: 3000, type: "BOSS" },
+            { name: "沃玛教主", level: 60, exp: 100, type: "BOSS" },
+            { name: "邪恶毒蛇", level: 50, exp: 100, type: "BOSS" },
+            { name: "白野猪", level: 50, exp: 100, type: "BOSS" },
+            { name: "邪恶钳虫", level: 50, exp: 100, type: "精英" },
+            { name: "沃玛卫士", level: 50, exp: 100, type: "精英" },
+            { name: "尸王殿尸王", level: 50, exp: 100, type: "BOSS" },
+            { name: "骷髅精灵", level: 50, exp: 100, type: "BOSS" },
+            { name: "半兽勇士", level: 50, exp: 100, type: "精英" },
+            { name: "巨型多角虫", level: 50, exp: 100, type: "精英" },
+            { name: "稻草人", level: 28, exp: 100, type: "普通" },
+            { name: "鹿", level: 50, exp: 500, type: "普通" },
+            { name: "半兽统领", level: 50, exp: 400, type: "精英" },
+            { name: "雪人王", level: 50, exp: 350, type: "精英" },
+            { name: "多钩猫王", level: 50, exp: 350, type: "精英" },
+            { name: "钉耙猫王", level: 50, exp: 530, type: "精英" },
+            { name: "剧毒蜘蛛", level: 50, exp: 500, type: "普通" },
+            { name: "天狼蜘蛛", level: 50, exp: 400, type: "普通" },
+            { name: "暴牙蜘蛛", level: 50, exp: 680, type: "普通" },
+            { name: "花吻蜘蛛", level: 43, exp: 700, type: "普通" },
+            { name: "月魔蜘蛛", level: 43, exp: 700, type: "普通" },
+            { name: "钢牙蜘蛛", level: 54, exp: 900, type: "普通" },
+            { name: "黑锷蜘蛛", level: 52, exp: 1000, type: "普通" },
+            { name: "血巨人", level: 53, exp: 800, type: "普通" },
+            { name: "血僵尸", level: 53, exp: 900, type: "普通" },
+            { name: "幻影蜘蛛", level: 55, exp: 4000, type: "BOSS" },
+            { name: "双头金刚", level: 47, exp: 4000, type: "BOSS" },
+            { name: "双头血魔", level: 53, exp: 5000, type: "BOSS" },
+            { name: "赤月恶魔", level: 50, exp: 2000, type: "BOSS" },
+            { name: "虹魔猪卫", level: 55, exp: 2500, type: "精英" },
+            { name: "虹魔蝎卫", level: 60, exp: 5000, type: "精英" },
+            { name: "虹魔教主", level: 60, exp: 2000, type: "BOSS" },
+            { name: "千年树妖", level: 60, exp: 190, type: "BOSS" },
+            { name: "恶灵僵尸", level: 60, exp: 460, type: "普通" },
+            { name: "恶灵尸王", level: 60, exp: 240, type: "普通" },
+            { name: "骷髅弓箭手", level: 28, exp: 420, type: "普通" },
+            { name: "骷髅刀斧手", level: 35, exp: 380, type: "普通" },
+            { name: "骷髅长枪兵", level: 32, exp: 450, type: "普通" },
+            { name: "骷髅锤兵", level: 35, exp: 2500, type: "普通" },
+            { name: "黄泉教主", level: 32, exp: 360, type: "BOSS" },
+            { name: "牛头魔", level: 33, exp: 400, type: "普通" },
+            { name: "牛魔战士", level: 40, exp: 480, type: "普通" },
+            { name: "牛魔斗士", level: 40, exp: 580, type: "普通" },
+            { name: "牛魔侍卫", level: 40, exp: 440, type: "普通" },
+            { name: "牛魔法师", level: 45, exp: 780, type: "普通" },
+            { name: "牛魔将军", level: 45, exp: 750, type: "普通" },
+            { name: "牛魔祭司", level: 60, exp: 4000, type: "普通" },
+            { name: "牛魔王", level: 60, exp: 4000, type: "BOSS" },
+            { name: "暗之牛魔王", level: 60, exp: 4000, type: "BOSS" }
+        ];
+
+        // 人物等级范围
+        const playerLevels = Array.from({length: 52}, (_, i) => i + 1);
+
+        // 计算经验衰减
+        function calculateExp(playerLevel, monsterLevel, baseExp) {
+            if (playerLevel - monsterLevel < 10) {
+                return baseExp;
+            } else {
+                const decayedExp = baseExp * (1 - 1/15 * (playerLevel - monsterLevel - 10));
+                return Math.max(decayedExp, 1);
+            }
+        }
+
+        // 生成表格
+        function generateTable() {
+            const table = document.getElementById('monsterTable');
+            const thead = table.querySelector('thead');
+            const tbody = table.querySelector('tbody');
+            
+            // 获取表头行
+            const headerRow = thead.querySelector('.header-row');
+            const levelRow = thead.querySelector('.level-row');
+            const baseExpRow = thead.querySelector('.base-exp-row');
+            
+            // 清空表头（保留前两列）
+            while (headerRow.children.length > 2) {
+                headerRow.removeChild(headerRow.lastChild);
+            }
+            while (levelRow.children.length > 2) {
+                levelRow.removeChild(levelRow.lastChild);
+            }
+            while (baseExpRow.children.length > 2) {
+                baseExpRow.removeChild(baseExpRow.lastChild);
+            }
+            
+            // 清空表格内容
+            tbody.innerHTML = '';
+            
+            // 生成表头 - 第一行（怪物名称）
+            monsterData.forEach((monster, index) => {
+                const nameTh = document.createElement('th');
+                nameTh.textContent = monster.name;
+                nameTh.setAttribute('data-index', index);
+                nameTh.setAttribute('data-level', monster.level);
+                nameTh.setAttribute('data-type', monster.type);
+                headerRow.appendChild(nameTh);
+            });
+            
+            // 生成表头 - 第二行（怪物等级）
+            // 前两列为空
+            // const emptyLevelTh1 = document.createElement('th');
+            // emptyLevelTh1.textContent = '';
+            // levelRow.appendChild(emptyLevelTh1);
+            
+            // const emptyLevelTh2 = document.createElement('th');
+            // emptyLevelTh2.textContent = '';
+            // levelRow.appendChild(emptyLevelTh2);
+            
+            // 从第三列开始填充怪物等级数据
+            monsterData.forEach((monster, index) => {
+                const levelTh = document.createElement('th');
+                levelTh.textContent = monster.level;
+                levelTh.setAttribute('data-index', index);
+                levelTh.setAttribute('data-level', monster.level);
+                levelTh.setAttribute('data-type', monster.type);
+                levelRow.appendChild(levelTh);
+            });
+            
+            // 生成表头 - 第三行（基础经验）
+            // 前两列为空
+            // const emptyExpTh1 = document.createElement('th');
+            // emptyExpTh1.textContent = '';
+            // baseExpRow.appendChild(emptyExpTh1);
+            
+            // const emptyExpTh2 = document.createElement('th');
+            // emptyExpTh2.textContent = '';
+            // baseExpRow.appendChild(emptyExpTh2);
+            
+            // 从第三列开始填充基础经验数据
+            monsterData.forEach((monster, index) => {
+                const expTh = document.createElement('th');
+                expTh.textContent = monster.exp;
+                expTh.setAttribute('data-index', index);
+                expTh.setAttribute('data-level', monster.level);
+                expTh.setAttribute('data-type', monster.type);
+                baseExpRow.appendChild(expTh);
+            });
+            
+            // 生成表格内容
+            playerLevels.forEach(playerLevel => {
+                const tr = document.createElement('tr');
+                
+                // 添加人物等级列
+                const playerLevelCell = document.createElement('td');
+                playerLevelCell.textContent = playerLevel;
+                playerLevelCell.className = 'player-level';
+                tr.appendChild(playerLevelCell);
+                
+                // 添加怪物名称列（空）
+                const monsterNameCell = document.createElement('td');
+                monsterNameCell.textContent = '';
+                tr.appendChild(monsterNameCell);
+                
+                // 添加每个怪物的经验值
+                monsterData.forEach(monster => {
+                    const td = document.createElement('td');
+                    const exp = calculateExp(playerLevel, monster.level, monster.exp);
+                    td.textContent = Math.round(exp);
+                    td.setAttribute('data-level', monster.level);
+                    td.setAttribute('data-type', monster.type);
+                    tr.appendChild(td);
+                });
+                
+                tbody.appendChild(tr);
+            });
+        }
+
+        // 筛选功能
+        function setupFilters() {
+            const levelFilter = document.getElementById('levelFilter');
+            // const typeFilter = document.getElementById('typeFilter');
+            
+            function applyFilters() {
+                const levelValue = levelFilter.value;
+                // const typeValue = typeFilter.value;
+                
+                // 获取所有表头单元格
+                const headerCells = document.querySelectorAll('thead th');
+                const dataRows = document.querySelectorAll('tbody tr');
+                
+                // 遍历所有怪物列（从索引2开始，跳过前两列）
+                for (let i = 2; i < headerCells.length; i++) {
+                    const monsterLevel = parseInt(headerCells[i].getAttribute('data-level'));
+                    const monsterType = headerCells[i].getAttribute('data-type');
+                    
+                    let showColumn = true;
+                    
+                    // 等级筛选
+                    if (levelValue !== 'all') {
+                        const [min, max] = levelValue.split('-').map(Number);
+                        if (monsterLevel < min || monsterLevel > max) {
+                            showColumn = false;
+                        }
+                    }
+                    
+                    // 类型筛选
+                    // if (typeValue !== 'all' && monsterType !== typeValue) {
+                    //     showColumn = false;
+                    // }
+                    
+                    // 显示/隐藏列
+                    if (showColumn) {
+                        headerCells[i].classList.remove('hidden');
+                    } else {
+                        headerCells[i].classList.add('hidden');
+                    }
+                    
+                    // 显示/隐藏对应数据单元格
+                    dataRows.forEach(row => {
+                        const cells = row.querySelectorAll('td');
+                        if (cells[i]) {
+                            if (showColumn) {
+                                cells[i].classList.remove('hidden');
+                            } else {
+                                cells[i].classList.add('hidden');
+                            }
+                        }
+                    });
+                }
+            }
+            
+            levelFilter.addEventListener('change', applyFilters);
+            // typeFilter.addEventListener('change', applyFilters);
+            return applyFilters;
+        }
+
+        // 页面加载完成后初始化
+        window.onload = function() {
+            generateTable();
+            const applyFilters = setupFilters();
+            // 强制设置默认选中项为"all"
+            document.getElementById('levelFilter').selectedIndex = 0;
+            // 应用筛选器以确保显示正确的数据
+            applyFilters();
+        };
+    </script>
+</body>
+</html>
