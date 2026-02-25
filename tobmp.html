@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMP图片批量合成工具（修复失真版）</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .input-area {
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px dashed #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        #status {
+            margin-top: 20px;
+            color: #333;
+            font-weight: 500;
+        }
+        .debug-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #666;
+            display: none;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BMP图片批量合成工具（修复失真版）</h1>
+        
+        <div class="input-area">
+            <h3>步骤1：选择底图（图片A）</h3>
+            <input type="file" id="baseImageInput" accept=".bmp,.BMP">
+        </div>
+
+        <div class="input-area">
+            <h3>步骤2：选择文件夹B（仅读取当前文件夹的BMP）</h3>
+            <input type="file" id="folderInput" webkitdirectory directory multiple accept=".bmp,.BMP">
+            <p style="color: #666; font-size: 14px;">提示：仅读取所选文件夹<u>直接目录</u>下的.bmp/.BMP文件，不包含子文件夹</p>
+            <div class="debug-info" id="debugInfo">
+                <p><strong>读取到的所有文件：</strong><span id="allFiles"></span></p>
+                <p><strong>筛选后的BMP文件：</strong><span id="filteredFiles"></span></p>
+            </div>
+            <button type="button" onclick="document.getElementById('debugInfo').style.display='block'">显示调试信息</button>
+        </div>
+
+        <button id="mergeBtn">开始批量合成并下载</button>
+        <div id="status"></div>
+    </div>
+
+    <script>
+        let baseImage = null;
+        let folderImages = [];
+
+        // 监听底图选择
+        document.getElementById('baseImageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (!/\.bmp$/i.test(file.name)) {
+                alert('请选择BMP格式的底图（后缀为.bmp/.BMP）！');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    baseImage = img;
+                    document.getElementById('status').innerText = `✅ 已加载底图：${file.name}（尺寸：${img.width}x${img.height}）`;
+                }
+                img.src = event.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        // 监听文件夹选择
+        document.getElementById('folderInput').addEventListener('change', function(e) {
+            const allFiles = Array.from(e.target.files);
+            document.getElementById('allFiles').innerText = allFiles.map(f => `${f.name}（路径：${f.webkitRelativePath}）`).join(' | ');
+            
+            folderImages = allFiles.filter(file => {
+                const relativePath = file.webkitRelativePath || file.name;
+                const slashCount = (relativePath.match(/\//g) || []).length;
+                const isRootFile = slashCount <= 1;
+                const isBmpFile = /\.bmp$/i.test(file.name);
+                return isRootFile && isBmpFile;
+            });
+
+            document.getElementById('filteredFiles').innerText = folderImages.map(f => f.name).join(' | ') || '无';
+            document.getElementById('status').innerText = 
+                `✅ 共读取到 ${allFiles.length} 个文件，筛选出 ${folderImages.length} 个当前文件夹的BMP文件`;
+        });
+
+        // 批量合成逻辑
+        document.getElementById('mergeBtn').addEventListener('click', async function() {
+            if (!baseImage) {
+                alert('请先选择底图A！');
+                return;
+            }
+            if (folderImages.length === 0) {
+                alert('未筛选到有效BMP文件！请检查：\n1. 文件是否在所选文件夹的直接目录下\n2. 文件后缀是否为.bmp/.BMP');
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.innerText = '合成中...';
+            document.getElementById('status').innerText = `开始合成，共${folderImages.length}张图片，请稍候...`;
+
+            try {
+                for (let i = 0; i < folderImages.length; i++) {
+                    const file = folderImages[i];
+                    const layerImg = await loadImage(file);
+                    const mergedBlob = await mergeImages(baseImage, layerImg);
+                    downloadBlob(mergedBlob, `${file.name}`);
+                    document.getElementById('status').innerText = `✅ 已完成 ${i+1}/${folderImages.length}：${file.name}`;
+                }
+                document.getElementById('status').innerText = `🎉 合成完成！共生成 ${folderImages.length} 张8位BMP图片，已自动下载`;
+            } catch (error) {
+                document.getElementById('status').innerText = `❌ 合成失败：${error.message}`;
+                console.error(error);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '开始批量合成并下载';
+            }
+        });
+
+        // 加载图片
+        function loadImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = (err) => reject(new Error(`加载图片${file.name}失败：${err}`));
+                    img.src = event.target.result;
+                }
+                reader.onerror = (err) => reject(new Error(`读取图片${file.name}失败：${err}`));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 合成图片（修复失真）
+        function mergeImages(baseImg, layerImg) {
+            return new Promise((resolve) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = baseImg.width;
+                canvas.height = baseImg.height;
+                const ctx = canvas.getContext('2d');
+
+                // 绘制底图+居中图层
+                ctx.drawImage(baseImg, 0, 0);
+                const x = (canvas.width - layerImg.width) / 2;
+                const y = (canvas.height - layerImg.height) / 2;
+                ctx.drawImage(layerImg, x, y);
+
+                // 转为8位BMP
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const bmpData = create8BitBMP(imageData);
+                const bmpBlob = new Blob([bmpData], { type: 'image/bmp' });
+                resolve(bmpBlob);
+            });
+        }
+
+        // 修复后的8位BMP生成函数
+        function create8BitBMP(imageData) {
+            const { width, height, data } = imageData;
+            const colorMap = new Map();
+            const colors = [];
+            // 第一步：先统计所有颜色，超过256色时做简单量化（取前256种+兜底）
+            for (let i = 0; i < data.length; i += 4) {
+                // 忽略透明通道（8位BMP不支持透明）
+                const r = data[i], g = data[i+1], b = data[i+2];
+                const colorKey = `${r},${g},${b}`;
+                // 仅保留前256种颜色
+                if (!colorMap.has(colorKey) && colors.length < 256) {
+                    colorMap.set(colorKey, colors.length);
+                    colors.push({ r, g, b });
+                }
+            }
+
+            // 第二步：正确生成像素索引（从上到下）
+            const pixelIndices = [];
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i], g = data[i+1], b = data[i+2];
+                const colorKey = `${r},${g},${b}`;
+                // 找不到的颜色映射到最接近的已有颜色（替代原有的||0）
+                const index = colorMap.get(colorKey) || findClosestColor({r,g,b}, colors);
+                pixelIndices.push(index);
+            }
+
+            // BMP文件头
+            const fileHeader = new Uint8Array([0x42,0x4D,0,0,0,0,0,0,0,0,14+40+256*4,0,0,0]);
+            // BMP信息头（修正高度为正，BMP默认倒序存储）
+            const infoHeader = new Uint8Array([
+                40,0,0,0, // 信息头大小
+                width&0xff,(width>>8)&0xff,(width>>16)&0xff,(width>>24)&0xff, // 宽度
+                height&0xff,(height>>8)&0xff,(height>>16)&0xff,(height>>24)&0xff, // 高度（正数，后续倒序写入像素）
+                1,0, // 平面数
+                8,0, // 8位色深
+                0,0,0,0, // 无压缩
+                0,0,0,0, // 像素数据大小（后续计算）
+                2835,0,0,0, // 水平分辨率（默认）
+                2835,0,0,0, // 垂直分辨率（默认）
+                256,0,0,0, // 调色板颜色数
+                0,0,0,0  // 重要颜色数
+            ]);
+
+            // 第三步：修复调色板（确保空位置为黑色，避免红色）
+            const palette = new Uint8Array(256*4);
+            for (let i=0; i<256; i++) {
+                const c = colors[i] || {r:0, g:0, b:0}; // 空位置强制黑色
+                palette[i*4] = c.b;     // B
+                palette[i*4+1] = c.g;   // G
+                palette[i*4+2] = c.r;   // R
+                palette[i*4+3] = 0;     // 保留位
+            }
+
+            // 第四步：正确写入像素数据（从下到上，4字节对齐）
+            const rowSize = Math.floor((8*width +31)/32)*4; // 每行字节数（4字节对齐）
+            const pixelData = new Uint8Array(rowSize*height);
+            let ptr = 0;
+            // BMP像素存储是从下到上，所以反向遍历y轴
+            for (let y = height - 1; y >= 0; y--) {
+                for (let x = 0; x < width; x++) {
+                    // 取对应位置的索引（y是反向的，x是正向的）
+                    const pixelIndex = y * width + x;
+                    pixelData[ptr++] = pixelIndices[pixelIndex];
+                }
+                // 补全4字节对齐
+                while (ptr % 4 !== 0) {
+                    pixelData[ptr++] = 0;
+                }
+            }
+
+            // 计算总大小并填充文件头
+            const pixelDataSize = pixelData.length;
+            const totalSize = 14 + 40 + 256*4 + pixelDataSize;
+            fileHeader[2] = totalSize & 0xff;
+            fileHeader[3] = (totalSize >> 8) & 0xff;
+            fileHeader[4] = (totalSize >> 16) & 0xff;
+            fileHeader[5] = (totalSize >> 24) & 0xff;
+            // 填充像素数据大小
+            infoHeader[20] = pixelDataSize & 0xff;
+            infoHeader[21] = (pixelDataSize >> 8) & 0xff;
+            infoHeader[22] = (pixelDataSize >> 16) & 0xff;
+            infoHeader[23] = (pixelDataSize >> 24) & 0xff;
+
+            // 合并所有数据
+            const bmpArray = new Uint8Array(totalSize);
+            let offset = 0;
+            bmpArray.set(fileHeader, offset); offset += 14;
+            bmpArray.set(infoHeader, offset); offset += 40;
+            bmpArray.set(palette, offset); offset += 256*4;
+            bmpArray.set(pixelData, offset);
+
+            return bmpArray;
+        }
+
+        // 辅助函数：寻找最接近的颜色（避免颜色丢失后直接变红）
+        function findClosestColor(target, colorList) {
+            if (colorList.length === 0) return 0; // 兜底返回黑色
+            let closestIndex = 0;
+            let minDistance = Infinity;
+            for (let i = 0; i < colorList.length; i++) {
+                const c = colorList[i];
+                // 计算RGB欧氏距离
+                const distance = Math.sqrt(
+                    Math.pow(target.r - c.r, 2) +
+                    Math.pow(target.g - c.g, 2) +
+                    Math.pow(target.b - c.b, 2)
+                );
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestIndex = i;
+                }
+            }
+            return closestIndex;
+        }
+
+        // 下载文件
+        function downloadBlob(blob, fileName) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
