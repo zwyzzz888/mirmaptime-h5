@@ -1,0 +1,615 @@
+/* ==================== 实在传奇物品交易公示站 - 独立样式 ==================== */
+
+/* 顶部导航栏 */
+.trade-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 15px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.site-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: white !important;
+}
+
+.back-link {
+    color: white;
+    text-decoration: none;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+    text-decoration: none;
+}
+
+/* 登录提示面板 */
+#trade-login-prompt {
+    text-align: center;
+    padding: 60px 20px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.login-prompt-content h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+}
+
+.login-prompt-content p {
+    color: #666;
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.btn-large {
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* 标签页样式优化 */
+.trade-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eef5f8;
+    flex-wrap: wrap;
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+}
+
+.tab-btn {
+    padding: 12px 20px;
+    background: white;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.tab-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* 筛选栏优化 */
+.trade-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.trade-filter input,
+.trade-filter select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    background: white;
+}
+
+.trade-filter input[type="text"] {
+    width: 250px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.trade-filter select {
+    min-width: 150px;
+    cursor: pointer;
+}
+
+.btn-search {
+    padding: 10px 25px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 500;
+}
+
+.btn-search:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* 物品列表优化 */
+.trade-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.trade-item {
+    border: 1px solid #eef5f8;
+    border-radius: 8px;
+    padding: 15px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.trade-item:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    border-color: #667eea;
+}
+
+.trade-item img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: #f5f5f5;
+}
+
+.trade-item h4 {
+    margin: 10px 0;
+    color: #2c3e50;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.trade-item p {
+    margin: 6px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.trade-item small {
+    color: #999;
+    font-size: 12px;
+}
+
+/* 空状态优化 */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+    background: #f8f9fa;
+    border-radius: 8px;
+    grid-column: 1/-1 !important;
+}
+
+.empty-state p {
+    margin: 10px 0;
+}
+
+.empty-state button {
+    margin-top: 15px;
+}
+
+/* 表单容器 */
+.form-container {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.trade-form .form-group {
+    margin-bottom: 18px;
+}
+
+.trade-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 14px;
+}
+
+.trade-form input,
+.trade-form select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.trade-form input:focus,
+.trade-form select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.form-actions button {
+    flex: 1;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* 用户信息面板 */
+.user-info {
+    padding: 30px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.user-info h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+.user-info p {
+    font-size: 16px;
+    margin: 15px 0;
+}
+
+.user-info button {
+    margin-top: 20px;
+    padding: 12px 30px;
+    font-size: 15px;
+}
+
+/* 弹窗优化 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: none;
+    backdrop-filter: blur(3px);
+}
+
+.modal.show {
+    display: block;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: white;
+    max-width: 450px;
+    margin: 80px auto;
+    padding: 30px;
+    border-radius: 12px;
+    position: relative;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-large {
+    max-width: 600px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+}
+
+.close:hover {
+    color: #333;
+}
+
+/* 按钮样式优化 */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 15px;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(245, 87, 108, 0.3);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(245, 87, 108, 0.4);
+}
+
+/* 分页控件优化 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.pagination button {
+    padding: 8px 14px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.pagination button:hover {
+    background: #f8f9fa;
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.pagination button.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+/* 风险声明优化 */
+.trade-risk-notice {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 25px;
+    border-left: 5px solid #ffc107;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.trade-risk-notice p {
+    color: #856404;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.8;
+}
+
+/* 底部信息 */
+.trade-footer {
+    background: #2c3e50;
+    color: white;
+    text-align: center;
+    padding: 25px 15px;
+    margin-top: 40px;
+}
+
+.trade-footer p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.trade-footer a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.trade-footer a:hover {
+    text-decoration: underline;
+}
+
+/* 物品详情样式 */
+#goods-detail-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#goods-detail-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 20px 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+#goods-detail-content p {
+    margin: 15px 0;
+    line-height: 2;
+    font-size: 15px;
+}
+
+#goods-detail-content strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+#goods-detail-content h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 22px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .site-title {
+        font-size: 20px;
+        text-align: center;
+    }
+    
+    .trade-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .trade-filter {
+        flex-direction: column;
+    }
+    
+    .trade-filter input,
+    .trade-filter select,
+    .trade-filter button {
+        width: 100%;
+    }
+    
+    .trade-filter input[type="text"] {
+        width: 100%;
+    }
+    
+    .trade-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        margin: 20px auto;
+        max-width: 90%;
+        padding: 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+    
+    .login-prompt-content h2 {
+        font-size: 20px;
+    }
+    
+    .login-prompt-content p {
+        font-size: 14px;
+    }
+}
+
+/* Toast 提示样式 */
+.toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: white;
+    padding: 14px 28px;
+    border-radius: 8px;
+    z-index: 9999;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: toastSlide 0.3s ease-out;
+}
+
+@keyframes toastSlide {
+    from {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}

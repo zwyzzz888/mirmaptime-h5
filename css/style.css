@@ -224,3 +224,396 @@ tr:hover {
   font-weight: bold; /* 字体加粗 */
   font-size: 18px; /* 字体变大一点 */
 }
+
+/* ==================== 交易信息发布模块样式 ==================== */
+
+/* 标签页样式 */
+.trade-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eef5f8;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.tab-btn:hover {
+    background: #e9ecef;
+}
+
+.tab-btn.active {
+    background: #007bff;
+    color: white;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 筛选栏样式 */
+.trade-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.trade-filter input,
+.trade-filter select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.trade-filter input[type="text"] {
+    width: 200px;
+}
+
+.trade-filter button {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.trade-filter button:hover {
+    background-color: #2980b9;
+}
+
+/* 物品列表样式 */
+.trade-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
+.trade-item {
+    border: 1px solid #eef5f8;
+    border-radius: 5px;
+    padding: 15px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.trade-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.trade-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.trade-item h4 {
+    margin: 10px 0;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+.trade-item p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.trade-item small {
+    color: #999;
+}
+
+/* 表单样式 */
+.trade-form .form-group {
+    margin-bottom: 15px;
+}
+
+.trade-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.trade-form input,
+.trade-form select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.trade-form input[type="text"],
+.trade-form input[type="number"] {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    flex: 1;
+}
+
+/* 用户信息面板 */
+.user-info {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.user-info p {
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+/* 登录提示面板 */
+#trade-login-prompt {
+    text-align: center;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+#trade-login-prompt p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* 弹窗样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none;
+}
+
+.modal.show {
+    display: block;
+}
+
+.modal-content {
+    background: white;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 5px;
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.close {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #333;
+}
+
+/* 按钮样式扩展 */
+.btn-primary {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 14px;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
+
+/* 分页控件 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.pagination button {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.pagination button:hover {
+    background: #f8f9fa;
+}
+
+.pagination button.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* 风险声明样式 */
+.trade-risk-notice {
+    background-color: #fff3cd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 20px;
+    border-left: 4px solid #ffc107;
+}
+
+.trade-risk-notice p {
+    color: #856404;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* 物品详情弹窗样式 */
+#goods-detail-content {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#goods-detail-content img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+#goods-detail-content p {
+    margin: 10px 0;
+    line-height: 1.8;
+}
+
+#goods-detail-content strong {
+    color: #2c3e50;
+}
+
+/* 空状态提示 */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .trade-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .trade-filter {
+        flex-direction: column;
+    }
+    
+    .trade-filter input,
+    .trade-filter select,
+    .trade-filter button {
+        width: 100%;
+    }
+    
+    .trade-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        margin: 20px auto;
+        max-width: 90%;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+}
