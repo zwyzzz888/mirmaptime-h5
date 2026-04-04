@@ -179,6 +179,9 @@ function logout() {
     showToast('已退出登录');
 }
 
+// ==================== 全局变量存储物品数据 ====================
+let TRADE_GOODS_DATA = {};  // 用于存储物品详情，key 为物品 ID
+
 // ==================== 物品管理相关 ====================
 
 /**
@@ -211,20 +214,27 @@ function loadTradeList(page = 1) {
         console.log('物品列表获取成功:', res.data);
         
         // 转换数据格式以适配渲染函数
-        const adaptedList = res.data.list.map(item => ({
-            id: item.id,
-            goods_name: item.title,
-            goods_type: item.goods_type,
-            goods_type_name: getTypeName(item.goods_type),
-            goods_attr: item.goods_attrs,
-            currency_type: item.money_type === '1' ? 'rmb' : 'gold',
-            price: item.price,
-            contact_type: item.contact_type,
-            contact_info: item.contact,
-            goods_img: item.goods_img,
-            create_time: item.sale_time,
-            username: item.username || '未知'
-        }));
+        const adaptedList = res.data.list.map(item => {
+            const goodsData = {
+                id: item.id,
+                goods_name: item.title,
+                goods_type: item.goods_type,
+                goods_type_name: getTypeName(item.goods_type),
+                goods_attr: item.goods_attrs,
+                currency_type: item.money_type === '1' ? 'rmb' : 'gold',
+                price: item.price,
+                contact_type: item.contact_type,
+                contact_info: item.contact,  // 保存联系方式
+                goods_img: item.goods_img,
+                create_time: item.sale_time,
+                username: item.username || '未知'
+            };
+            
+            // 存储到全局变量中供详情页使用
+            TRADE_GOODS_DATA[item.id] = goodsData;
+            
+            return goodsData;
+        });
         
         renderTradeList(adaptedList);
         renderPagination(res.data.total, page);
@@ -295,27 +305,19 @@ function renderPagination(total, current) {
  * 查看物品详情
  */
 function viewGoodsDetail(id) {
-    // 从列表中查找物品（已加载到页面中的）
-    const $item = $(`.trade-item[onclick="viewGoodsDetail(${id})"]`);
+    console.log('查看物品详情，ID:', id);
+    console.log('全局缓存数据:', TRADE_GOODS_DATA);
     
-    if ($item.length === 0) {
+    // 直接从全局变量中查找物品数据
+    const goods = TRADE_GOODS_DATA[id];
+    
+    if (!goods) {
+        console.error('❌ 找不到物品:', id);
         showToast('物品不存在');
         return;
     }
     
-    // 从 DOM 中提取数据渲染详情
-    const goods = {
-        goods_name: $item.find('h4').text(),
-        goods_type: $item.find('p strong').first().next().text(),
-        goods_attr: $item.find('p strong').eq(1).next().text() || '无',
-        price: parseInt($item.find('p[style*="color:#e74c3c"]').text().replace(/[^0-9]/g, '')),
-        currency_type: $item.find('p[style*="color:#e74c3c"]').text().includes('RMB') ? 'rmb' : 'gold',
-        contact_info: '',  // 详情页才会显示
-        contact_type: 'qq',  // 默认
-        goods_img: $item.find('img').attr('src') || '',
-        create_time: $item.find('small').text().replace('发布时间：', ''),
-        username: $item.find('p').eq(4).text().replace('卖家：', '')
-    };
+    console.log('✅ 找到物品数据:', goods);
     
     renderGoodsDetail(goods);
     $('#goods-modal').addClass('show');
