@@ -71,6 +71,20 @@ function copyToClipboard(text) {
 }
 
 /**
+ * 复制联系方式
+ */
+function copyContact(contact) {
+    console.log('复制联系方式:', contact);
+    copyToClipboard(contact).then(() => {
+        console.log('✅ 复制成功');
+        showToast('已复制到剪贴板');
+    }).catch((err) => {
+        console.error('❌ 复制失败:', err);
+        showToast('复制失败');
+    });
+}
+
+/**
  * 显示 Toast 提示
  */
 function showToast(message, duration = 2000) {
@@ -339,7 +353,7 @@ function renderGoodsDetail(goods) {
         <p><strong>物品类型：</strong>${getTypeName(goods.goods_type)}</p>
         <p><strong>物品属性：</strong>${goods.goods_attr || '无'}</p>
         <p style="color:#e74c3c;font-size:18px;font-weight:bold;"><strong>价格：</strong>${formatPrice(goods.price, goods.currency_type)}</p>
-        <p><strong>联系方式：</strong>${contactType}：<span style="color:#007bff;font-weight:bold;cursor:pointer;" onclick="copyContact('${goods.contact_info}')">${goods.contact_info}</span> <small style="color:#999;">(点击复制)</small></p>
+        <p><strong>联系方式：</strong>${contactType}：<span style="color:#007bff;font-weight:bold;" onclick="copyContact('${goods.contact_info}')">${goods.contact_info} <small style="color:#999;cursor:pointer;">(点击复制)</small></span></p>
         <p><strong>卖家：</strong>${goods.username || '未知'}</p>
         <p><strong>发布时间：</strong>${goods.create_time}</p>
         <div class="trade-risk-notice" style="margin-top:20px;">
@@ -348,17 +362,6 @@ function renderGoodsDetail(goods) {
     `;
     
     $('#goods-detail-content').html(html);
-}
-
-/**
- * 复制联系方式
- */
-function copyContact(contact) {
-    copyToClipboard(contact).then(() => {
-        showToast('已复制到剪贴板');
-    }).catch(() => {
-        showToast('复制失败');
-    });
 }
 
 /**
