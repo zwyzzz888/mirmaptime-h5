@@ -880,19 +880,8 @@ function handleImageUpload(file) {
             console.error('XHR 响应:', xhr.responseText || xhr);
             console.error('===========================================\n');
             
-            let errorMsg = '网络错误';
-            if (xhr.responseText) {
-                try {
-                    const errData = JSON.parse(xhr.responseText);
-                    errorMsg = errData.msg || errData.message || error;
-                } catch (e) {
-                    errorMsg = xhr.responseText.substring(0, 100);
-                }
-            } else {
-                errorMsg = error;
-            }
-            
-            showToast('上传失败：' + errorMsg);
+            // 统一显示友好的错误提示
+            showToast('图片上传失败，请重试');
         });
     };
     
