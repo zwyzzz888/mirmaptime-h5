@@ -395,7 +395,9 @@ let MY_GOODS_DATA = {};  // 用于存储物品详情，key 为物品 ID
 /**
  * 加载我的发布列表（对接真实 API）
  */
-function loadMyGoodsList() {
+let MY_GOODS_CURRENT_PAGE = 1;  // 当前页码
+
+function loadMyGoodsList(page = 1) {
     const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
     
     if (!userInfo.username) {
@@ -404,11 +406,12 @@ function loadMyGoodsList() {
         return;
     }
     
-    console.log('加载我的物品列表...');
+    MY_GOODS_CURRENT_PAGE = page;
+    console.log('加载我的物品列表，page:', page);
     
     // 调用 API 获取我的物品
     TradeAPI.getMyGoodsList({
-        page: 1,
+        page: page,
         perpage: 20
     })
     .then(function(res) {
@@ -449,6 +452,7 @@ function loadMyGoodsList() {
         });
         
         renderMyGoodsList(adaptedList);
+        renderMyGoodsPagination(res.data.total, page);
     })
     .catch(function(err) {
         console.error('获取我的物品列表失败:', err);
@@ -501,6 +505,32 @@ function renderMyGoodsList(list) {
         `;
     });
     $('#my-goods-list').html(html);
+}
+
+/**
+ * 渲染我的物品分页
+ */
+function renderMyGoodsPagination(total, current) {
+    const pageSize = 20;
+    const totalPages = Math.ceil(total / pageSize);
+    
+    // 在 my-goods-list 后面添加或更新分页
+    let $pagination = $('#my-goods-pagination');
+    if ($pagination.length === 0) {
+        $pagination = $('<div id="my-goods-pagination" class="pagination"></div>');
+        $('#my-goods-list').after($pagination);
+    }
+    
+    if (totalPages <= 1) {
+        $pagination.html('');
+        return;
+    }
+    
+    let html = '';
+    for (let i = 1; i <= totalPages; i++) {
+        html += `<button class="${i === current ? 'active' : ''}" onclick="loadMyGoodsList(${i})">${i}</button>`;
+    }
+    $pagination.html(html);
 }
 
 /**
@@ -1094,10 +1124,35 @@ function initForms() {
     // 注册表单
     $('#register-form').off('submit').on('submit', function(e) {
         e.preventDefault();
+        
         const username = $(this).find('[name="reg_username"]').val();
         const password = $(this).find('[name="reg_password"]').val();
+        const passwordConfirm = $(this).find('[name="reg_password_confirm"]').val();
         const email = $(this).find('[name="reg_email"]').val();
+        
+        // 验证两次密码是否一致
+        if (password !== passwordConfirm) {
+            showToast('两次输入的密码不一致，请重新输入');
+            $('#reg-password-confirm').focus();
+            return;
+        }
+        
         register(username, password, email);
+    });
+    
+    // 实时验证密码一致性
+    $('#reg-password, #reg-password-confirm').on('input', function() {
+        const password = $('#reg-password').val();
+        const passwordConfirm = $('#reg-password-confirm').val();
+        const $tip = $('#password-match-tip');
+        
+        if (passwordConfirm.length === 0) {
+            $tip.text('').css('color', '#999');
+        } else if (password === passwordConfirm) {
+            $tip.text('✓ 密码一致').css('color', '#27ae60');
+        } else {
+            $tip.text('✗ 密码不一致').css('color', '#e74c3c');
+        }
     });
     
     // 发布表单
