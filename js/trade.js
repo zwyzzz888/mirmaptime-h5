@@ -771,6 +771,9 @@ function uploadImage() {
             xhrFields: {
                 withCredentials: false
             },
+            body: formData,
+            // 关键配置：解决部分CORS问题
+            mode: "cors",
             crossDomain: true
         })
         .done(function(res) {
