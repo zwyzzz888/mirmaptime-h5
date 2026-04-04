@@ -720,7 +720,139 @@ const IMAGE_HOST = {
 };
 
 /**
- * 上传图片到图床（使用果创云 YesAPI）
+ * 处理图片上传（统一处理函数）
+ */
+function handleImageUpload(file) {
+    if (!file) {
+        showToast('请选择图片文件');
+        return;
+    }
+    
+    // 检查是否为图片
+    if (!file.type.startsWith('image/')) {
+        showToast('请选择图片文件');
+        return;
+    }
+    
+    // 检查文件大小（限制 1MB）
+    if (file.size > 1 * 1024 * 1024) {
+        showToast('图片大小不能超过 1MB');
+        return;
+    }
+    
+    // 显示上传中提示
+    showToast('正在上传图片...', 3000);
+    
+    console.log('\n===========================================');
+    console.log('📸 开始上传图片（果创云 API）');
+    console.log('===========================================');
+    console.log('文件名:', file.name);
+    console.log('文件大小:', (file.size / 1024).toFixed(2), 'KB');
+    console.log('文件类型:', file.type);
+    
+    // 读取文件为 Base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64Data = e.target.result; // data:image/png;base64,iVBOR...
+        
+        console.log('Base64 长度:', base64Data.length);
+        
+        // 构建 API 请求参数
+        const requestData = {
+            file: base64Data,  // 必须使用 POST 传递的 base64 数据
+            file_name: file.name  // 文件名
+        };
+        
+        // 调用果创云 API
+        $.ajax({
+            url: `${IMAGE_HOST.BASE_URL}/?s=${IMAGE_HOST.UPLOAD_SERVICE}&app_key=${TRADE_API.APP_KEY}&yesapi_allow_origin=1`,
+            method: 'POST',
+            data: requestData,
+            dataType: 'json'
+        })
+        .done(function(res) {
+            console.log('\n✅ 收到响应');
+            console.log('响应内容:', JSON.stringify(res, null, 2));
+            
+            // 检查是否成功
+            if (res.ret === 200 && res.data && res.data.err_code === 0) {
+                // 获取图片 URL（优先使用 HTTPS URL）
+                const imageUrl = res.data.https_url || res.data.url;
+                
+                if (!imageUrl) {
+                    console.error('❌ 返回数据中没有图片 URL');
+                    showToast('上传失败：未获取到图片 URL');
+                    return;
+                }
+                
+                console.log('\n🔗 图片 URL:', imageUrl);
+                
+                // 填入到输入框
+                const $input = $('#goods-img-url');
+                if ($input.length === 0) {
+                    console.error('❌ 找不到输入框 #goods-img-url');
+                    showToast('页面错误：找不到图片输入框');
+                    return;
+                }
+                
+                // 设置新值
+                $input.val(imageUrl);
+                console.log('✅ 已保存到输入框:', $input.val());
+                
+                // 移除旧的预览图（如果有）
+                $('#img-url-status').next('.image-preview').remove();
+                
+                // 显示预览图 - 插入到状态文本后面
+                const previewHtml = `<div class="image-preview" style="margin-top:10px;"><img src="${imageUrl}" style="max-width:200px;max-height:200px;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,0.1);" alt="预览图"></div>`;
+                $('#img-url-status').after(previewHtml);
+                
+                // 更新状态文本
+                $('#img-url-status').text('✓ 图片已上传');
+                
+                console.log('\n✅ 图片上传成功！');
+                console.log('===========================================\n');
+                
+                showToast('✅ 上传成功！图片 URL 已保存');
+            } else {
+                console.error('\n❌ 上传失败 - err_code:', res.data?.err_code);
+                console.error('完整响应:', res);
+                showToast('上传失败：' + (res.data?.err_msg || res.msg || '未知错误'));
+            }
+        })
+        .fail(function(xhr, status, error) {
+            console.error('\n❌ 上传失败');
+            console.error('状态:', status);
+            console.error('错误:', error);
+            console.error('XHR 响应:', xhr.responseText || xhr);
+            console.error('===========================================\n');
+            
+            let errorMsg = '网络错误';
+            if (xhr.responseText) {
+                try {
+                    const errData = JSON.parse(xhr.responseText);
+                    errorMsg = errData.msg || errData.message || error;
+                } catch (e) {
+                    errorMsg = xhr.responseText.substring(0, 100);
+                }
+            } else {
+                errorMsg = error;
+            }
+            
+            showToast('上传失败：' + errorMsg);
+        });
+    };
+    
+    reader.onerror = function() {
+        console.error('❌ 文件读取失败');
+        showToast('文件读取失败，请重试');
+    };
+    
+    // 读取文件
+    reader.readAsDataURL(file);
+}
+
+/**
+ * 上传图片到图床（支持点击、拖拽、粘贴）
  */
 function uploadImage() {
     // 创建文件输入框
@@ -730,131 +862,71 @@ function uploadImage() {
     
     fileInput.onchange = function(e) {
         const file = e.target.files[0];
-        
-        if (!file) {
-            showToast('请选择图片文件');
-            return;
-        }
-        
-        // 检查文件大小（限制 1MB）
-        if (file.size > 1 * 1024 * 1024) {
-            showToast('图片大小不能超过 1MB');
-            return;
-        }
-        
-        // 显示上传中提示
-        showToast('正在上传图片...', 3000);
-        
-        console.log('\n===========================================');
-        console.log('📸 开始上传图片（果创云 API）');
-        console.log('===========================================');
-        console.log('文件名:', file.name);
-        console.log('文件大小:', (file.size / 1024).toFixed(2), 'KB');
-        console.log('文件类型:', file.type);
-        
-        // 读取文件为 Base64
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Data = e.target.result; // data:image/png;base64,iVBOR...
-            
-            console.log('Base64 长度:', base64Data.length);
-            
-            // 构建 API 请求参数
-            const requestData = {
-                file: base64Data,  // 必须使用 POST 传递的 base64 数据
-                file_name: file.name  // 文件名
-            };
-            
-            // 调用果创云 API
-            $.ajax({
-                url: `${IMAGE_HOST.BASE_URL}/?s=${IMAGE_HOST.UPLOAD_SERVICE}&app_key=${TRADE_API.APP_KEY}&yesapi_allow_origin=1`,
-                method: 'POST',
-                data: requestData,
-                dataType: 'json'
-            })
-            .done(function(res) {
-                console.log('\n✅ 收到响应');
-                console.log('响应内容:', JSON.stringify(res, null, 2));
-                
-                // 检查是否成功
-                if (res.ret === 200 && res.data && res.data.err_code === 0) {
-                    // 获取图片 URL（优先使用 HTTPS URL）
-                    const imageUrl = res.data.https_url || res.data.url;
-                    
-                    if (!imageUrl) {
-                        console.error('❌ 返回数据中没有图片 URL');
-                        showToast('上传失败：未获取到图片 URL');
-                        return;
-                    }
-                    
-                    console.log('\n🔗 图片 URL:', imageUrl);
-                    
-                    // 填入到输入框
-                    const $input = $('#goods-img-url');
-                    if ($input.length === 0) {
-                        console.error('❌ 找不到输入框 #goods-img-url');
-                        showToast('页面错误：找不到图片输入框');
-                        return;
-                    }
-                    
-                    // 设置新值
-                    $input.val(imageUrl);
-                    console.log('✅ 已保存到输入框:', $input.val());
-                    
-                    // 移除旧的预览图（如果有）
-                    $('#img-url-status').next('.image-preview').remove();
-                    
-                    // 显示预览图 - 插入到状态文本后面
-                    const previewHtml = `<div class="image-preview" style="margin-top:10px;"><img src="${imageUrl}" style="max-width:200px;max-height:200px;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,0.1);" alt="预览图"></div>`;
-                    $('#img-url-status').after(previewHtml);
-                    
-                    // 更新状态文本
-                    $('#img-url-status').text('✓ 图片已上传');
-                    
-                    console.log('\n✅ 图片上传成功！');
-                    console.log('===========================================\n');
-                    
-                    showToast('✅ 上传成功！图片 URL 已保存');
-                } else {
-                    console.error('\n❌ 上传失败 - err_code:', res.data?.err_code);
-                    console.error('完整响应:', res);
-                    showToast('上传失败：' + (res.data?.err_msg || res.msg || '未知错误'));
-                }
-            })
-            .fail(function(xhr, status, error) {
-                console.error('\n❌ 上传失败');
-                console.error('状态:', status);
-                console.error('错误:', error);
-                console.error('XHR 响应:', xhr.responseText || xhr);
-                console.error('===========================================\n');
-                
-                let errorMsg = '网络错误';
-                if (xhr.responseText) {
-                    try {
-                        const errData = JSON.parse(xhr.responseText);
-                        errorMsg = errData.msg || errData.message || error;
-                    } catch (e) {
-                        errorMsg = xhr.responseText.substring(0, 100);
-                    }
-                } else {
-                    errorMsg = error;
-                }
-                
-                showToast('上传失败：' + errorMsg);
-            });
-        };
-        
-        reader.onerror = function() {
-            console.error('❌ 文件读取失败');
-            showToast('文件读取失败，请重试');
-        };
-        
-        // 读取文件
-        reader.readAsDataURL(file);
+        handleImageUpload(file);
     };
     
     // 触发文件选择
     fileInput.click();
+}
+
+/**
+ * 初始化拖拽上传功能
+ */
+function initDragUpload() {
+    const $form = $('#publish-form');
+    if ($form.length === 0) return;
+    
+    // 拖拽进入
+    $form.on('dragenter dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css('border', '2px dashed #667eea');
+    });
+    
+    // 拖拽离开
+    $form.on('dragleave drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $(this).css('border', '');
+    });
+    
+    // 放置文件
+    $form.on('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const files = e.originalEvent.dataTransfer.files;
+        if (files && files.length > 0) {
+            handleImageUpload(files[0]);
+        }
+    });
+}
+
+/**
+ * 初始化粘贴上传功能
+ */
+function initPasteUpload() {
+    $(document).on('paste', function(e) {
+        // 只在发布物品标签页时生效
+        if (!$('#trade-tab-publish').hasClass('active')) {
+            return;
+        }
+        
+        const items = e.originalEvent.clipboardData && e.originalEvent.clipboardData.items;
+        if (!items) return;
+        
+        // 查找图片
+        for (let i = 0; i < items.length; i++) {
+            if (items[i].type.indexOf('image') !== -1) {
+                const file = items[i].getAsFile();
+                if (file) {
+                    e.preventDefault();
+                    handleImageUpload(file);
+                    break;
+                }
+            }
+        }
+    });
 }
 
 /**
@@ -1138,6 +1210,10 @@ $(document).ready(function() {
     
     // 初始化弹窗关闭
     initModalClose();
+    
+    // 初始化拖拽和粘贴上传
+    initDragUpload();
+    initPasteUpload();
     
     // 默认加载物品列表（所有人可见）
     loadTradeList();
