@@ -710,16 +710,14 @@ function deleteGoods(id) {
 }
 
 // ==================== 图床 API 配置 ====================
-
+// 已改为使用果创云 YesAPI 图片上传接口，避免 CORS 跨域问题
 const IMAGE_HOST = {
-    BASE_URL: 'https://i.111666.best', // 直接使用远程图床地址
-    TOKEN: 'kLNxBck1lgYnr516DEgCqTgxVRDJIEz4',
-    UPLOAD_PATH: '/image',
-    DELETE_PATH: '/image' // 删除时拼接 IMAGE-PATH
+    BASE_URL: 'https://api.yesapi.net', // 使用果创云 API
+    UPLOAD_SERVICE: 'App.CDN.UploadImgByBase64' // 图片上传服务名
 };
 
 /**
- * 上传图片到图床
+ * 上传图片到图床（使用果创云 YesAPI）
  */
 function uploadImage() {
     // 创建文件输入框
@@ -735,127 +733,121 @@ function uploadImage() {
             return;
         }
         
-        // 检查文件大小（限制 5MB）
-        if (file.size > 5 * 1024 * 1024) {
-            showToast('图片大小不能超过 5MB');
+        // 检查文件大小（限制 1MB）
+        if (file.size > 1 * 1024 * 1024) {
+            showToast('图片大小不能超过 1MB');
             return;
         }
         
         // 显示上传中提示
         showToast('正在上传图片...', 3000);
         
-        // 使用 FormData 上传文件
-        const formData = new FormData();
-        formData.append('image', file);
-        
         console.log('\n===========================================');
-        console.log('📸 开始上传图片');
+        console.log('📸 开始上传图片（果创云 API）');
         console.log('===========================================');
-        console.log('URL:', IMAGE_HOST.BASE_URL + IMAGE_HOST.UPLOAD_PATH);
-        console.log('Token:', IMAGE_HOST.TOKEN);
         console.log('文件名:', file.name);
         console.log('文件大小:', (file.size / 1024).toFixed(2), 'KB');
         console.log('文件类型:', file.type);
         
-        // 调用图床 API
-        $.ajax({
-            url: IMAGE_HOST.BASE_URL + IMAGE_HOST.UPLOAD_PATH,
-            method: 'POST',
-            data: formData,
-            headers: {
-                'Auth-Token': IMAGE_HOST.TOKEN
-            },
-            processData: false,
-            contentType: false,
-            dataType: 'json',
-            xhrFields: {
-                withCredentials: false
-            },
-            body: formData,
-            // 关键配置：解决部分CORS问题
-            mode: "cors",
-            crossDomain: true
-        })
-        .done(function(res) {
-            console.log('\n✅ 收到响应');
-            console.log('响应类型:', typeof res);
-            console.log('响应内容:', JSON.stringify(res, null, 2));
+        // 读取文件为 Base64
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Data = e.target.result; // data:image/png;base64,iVBOR...
             
-            // 如果是字符串，手动解析 JSON
-            let responseData = res;
-            if (typeof res === 'string') {
-                try {
-                    responseData = JSON.parse(res);
-                    console.log('✅ JSON 解析成功:', responseData);
-                } catch (e) {
-                    console.error('❌ JSON 解析失败:', e);
-                    showToast('上传失败：响应格式错误');
-                    return;
+            console.log('Base64 长度:', base64Data.length);
+            
+            // 构建 API 请求参数
+            const requestData = {
+                file: base64Data,  // 必须使用 POST 传递的 base64 数据
+                file_name: file.name  // 文件名
+            };
+            
+            // 调用果创云 API
+            $.ajax({
+                url: `${IMAGE_HOST.BASE_URL}/?s=${IMAGE_HOST.UPLOAD_SERVICE}&app_key=${TRADE_API.APP_KEY}&yesapi_allow_origin=1`,
+                method: 'POST',
+                data: requestData,
+                dataType: 'json'
+            })
+            .done(function(res) {
+                console.log('\n✅ 收到响应');
+                console.log('响应内容:', JSON.stringify(res, null, 2));
+                
+                // 检查是否成功
+                if (res.ret === 200 && res.data && res.data.err_code === 0) {
+                    // 获取图片 URL（优先使用 HTTPS URL）
+                    const imageUrl = res.data.https_url || res.data.url;
+                    
+                    if (!imageUrl) {
+                        console.error('❌ 返回数据中没有图片 URL');
+                        showToast('上传失败：未获取到图片 URL');
+                        return;
+                    }
+                    
+                    console.log('\n🔗 图片 URL:', imageUrl);
+                    
+                    // 填入到输入框
+                    const $input = $('#goods-img-url');
+                    if ($input.length === 0) {
+                        console.error('❌ 找不到输入框 #goods-img-url');
+                        showToast('页面错误：找不到图片输入框');
+                        return;
+                    }
+                    
+                    // 设置新值
+                    $input.val(imageUrl);
+                    console.log('✅ 已保存到输入框:', $input.val());
+                    
+                    // 移除旧的预览图（如果有）
+                    $('#img-url-status').next('.image-preview').remove();
+                    
+                    // 显示预览图 - 插入到状态文本后面
+                    const previewHtml = `<div class="image-preview" style="margin-top:10px;"><img src="${imageUrl}" style="max-width:200px;max-height:200px;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,0.1);" alt="预览图"></div>`;
+                    $('#img-url-status').after(previewHtml);
+                    
+                    // 更新状态文本
+                    $('#img-url-status').text('✓ 图片已上传');
+                    
+                    console.log('\n✅ 图片上传成功！');
+                    console.log('===========================================\n');
+                    
+                    showToast('✅ 上传成功！图片 URL 已保存');
+                } else {
+                    console.error('\n❌ 上传失败 - err_code:', res.data?.err_code);
+                    console.error('完整响应:', res);
+                    showToast('上传失败：' + (res.data?.err_msg || res.msg || '未知错误'));
                 }
-            }
-            
-            // 检查响应是否成功
-            if (responseData.ok === true || responseData.ok === 'true' || !!responseData.ok) {
-                // 拼接完整的图片 URL
-                const fullImageUrl = IMAGE_HOST.BASE_URL + responseData.src;
+            })
+            .fail(function(xhr, status, error) {
+                console.error('\n❌ 上传失败');
+                console.error('状态:', status);
+                console.error('错误:', error);
+                console.error('XHR 响应:', xhr.responseText || xhr);
+                console.error('===========================================\n');
                 
-                console.log('\n🔗 图片 URL:');
-                console.log('   src:', responseData.src);
-                console.log('   完整 URL:', fullImageUrl);
-                
-                // 填入到输入框
-                const $input = $('#goods-img-url');
-                if ($input.length === 0) {
-                    console.error('❌ 找不到输入框 #goods-img-url');
-                    showToast('页面错误：找不到图片输入框');
-                    return;
+                let errorMsg = '网络错误';
+                if (xhr.responseText) {
+                    try {
+                        const errData = JSON.parse(xhr.responseText);
+                        errorMsg = errData.msg || errData.message || error;
+                    } catch (e) {
+                        errorMsg = xhr.responseText.substring(0, 100);
+                    }
+                } else {
+                    errorMsg = error;
                 }
                 
-                // 设置新值
-                $input.val(fullImageUrl);
-                console.log('✅ 已保存到输入框:', $input.val());
-                
-                // 移除旧的预览图（如果有）
-                $('#img-url-status').next('.image-preview').remove();
-                
-                // 显示预览图 - 插入到状态文本后面
-                const previewHtml = `<div class="image-preview" style="margin-top:10px;"><img src="${fullImageUrl}" style="max-width:200px;max-height:200px;border-radius:5px;box-shadow:0 2px 8px rgba(0,0,0,0.1);" alt="预览图"></div>`;
-                $('#img-url-status').after(previewHtml);
-                
-                // 更新状态文本
-                $('#img-url-status').text('✓ 图片已上传');
-                
-                console.log('\n✅ 图片上传成功！');
-                console.log('===========================================\n');
-                
-                showToast('✅ 上传成功！图片 URL 已保存');
-            } else {
-                console.error('\n❌ 上传失败 - ok 字段:', responseData.ok);
-                console.error('完整响应:', responseData);
-                showToast('上传失败：' + (responseData.message || responseData.msg || '未知错误'));
-            }
-        })
-        .fail(function(xhr, status, error) {
-            console.error('\n❌ 上传失败');
-            console.error('状态:', status);
-            console.error('错误:', error);
-            console.error('XHR 响应:', xhr.responseText || xhr);
-            console.error('===========================================\n');
-            
-            let errorMsg = '网络错误';
-            if (xhr.responseText) {
-                try {
-                    const errData = JSON.parse(xhr.responseText);
-                    errorMsg = errData.message || errData.msg || error;
-                } catch (e) {
-                    errorMsg = xhr.responseText.substring(0, 100);
-                }
-            } else {
-                errorMsg = error;
-            }
-            
-            showToast('上传失败：' + errorMsg);
-        });
+                showToast('上传失败：' + errorMsg);
+            });
+        };
+        
+        reader.onerror = function() {
+            console.error('❌ 文件读取失败');
+            showToast('文件读取失败，请重试');
+        };
+        
+        // 读取文件
+        reader.readAsDataURL(file);
     };
     
     // 触发文件选择
@@ -863,36 +855,13 @@ function uploadImage() {
 }
 
 /**
- * 删除图片
- * @param {string} imagePath - 图片路径（如：/image/zs2QX77STF9WAlrk24Zd7K.png）
+ * 删除图片（已禁用，果创云 API 不支持前端删除）
+ * @param {string} imagePath - 图片路径
  */
-function deleteImage(imagePath) {
-    if (!confirm('确定要删除这张图片吗？')) {
-        return;
-    }
-    
-    // 提取 IMAGE-PATH（去掉开头的 /image/）
-    const imageFileName = imagePath.replace(IMAGE_HOST.BASE_URL, '').replace('/image/', '');
-    const deleteUrl = IMAGE_HOST.BASE_URL + IMAGE_HOST.DELETE_PATH + '/' + imageFileName;
-    
-    console.log('删除图片:', deleteUrl);
-    
-    $.ajax({
-        url: deleteUrl,
-        method: 'DELETE',
-        headers: {
-            'Auth-Token': IMAGE_HOST.TOKEN
-        }
-    })
-    .done(function(res) {
-        console.log('删除响应:', res);
-        showToast('图片已删除');
-    })
-    .fail(function(xhr, status, error) {
-        console.error('删除失败:', xhr, status, error);
-        showToast('删除失败：' + error);
-    });
-}
+// function deleteImage(imagePath) {
+//     // 此函数已禁用，因为果创云 API 不支持从前端删除图片
+//     // 需要在果创云后台手动删除
+// }
 
 /**
  * 检查图片 URL（调试用）
