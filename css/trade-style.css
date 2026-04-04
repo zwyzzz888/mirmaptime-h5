@@ -323,9 +323,9 @@
 
 .modal-content {
     background: white;
-    max-width: 450px;
-    margin: 80px auto;
-    padding: 30px;
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 40px;
     border-radius: 12px;
     position: relative;
     animation: slideIn 0.3s ease-out;
@@ -362,6 +362,50 @@
 
 .close:hover {
     color: #333;
+}
+
+/* 登录和注册表单样式优化 */
+#login-form .form-group,
+#register-form .form-group {
+    margin-bottom: 20px;
+}
+
+#login-form label,
+#register-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+#login-form input,
+#register-form input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 15px;
+    transition: border-color 0.3s;
+}
+
+#login-form input:focus,
+#register-form input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+#login-form button[type="submit"],
+#register-form button[type="submit"],
+#login-form button[type="button"],
+#register-form button[type="button"] {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 10px;
 }
 
 /* 按钮样式优化 */
