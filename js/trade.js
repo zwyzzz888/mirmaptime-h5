@@ -586,6 +586,29 @@ function editGoods(id) {
     // 修改提交按钮文本
     $('#publish-form button[type="submit"]').text('💾 保存修改');
     
+    // 修改重置按钮为取消保存
+    $('#publish-form button[type="reset"]').text('❌ 取消保存').off('click').on('click', function(e) {
+        e.preventDefault();  // 阻止默认的重置行为
+        
+        // 清除编辑状态
+        $('#publish-form').removeData('editing-id');
+        
+        // 重置表单
+        $('#publish-form')[0].reset();
+        
+        // 清除预览图
+        $('.image-preview').remove();
+        $('#img-url-status').text('');
+        
+        // 恢复提交按钮文本
+        $('#publish-form button[type="submit"]').text('📦 发布物品');
+        
+        // 恢复重置按钮文本和事件
+        $(this).text('🔄 重置清空').off('click');
+        
+        showToast('已取消编辑');
+    });
+    
     // 切换到发布标签页（会在 initTabs 中重置表单，所以必须在切换后填充数据）
     $('.tab-btn[data-tab="publish"]').click();
     
@@ -760,7 +783,8 @@ function handleImageUpload(file) {
         // 构建 API 请求参数
         const requestData = {
             file: base64Data,  // 必须使用 POST 传递的 base64 数据
-            file_name: file.name  // 文件名
+            file_name: file.name,  // 文件名
+            yesapi_allow_origin: 1
         };
         
         // 调用果创云 API
@@ -768,7 +792,8 @@ function handleImageUpload(file) {
             url: `${IMAGE_HOST.BASE_URL}/?s=${IMAGE_HOST.UPLOAD_SERVICE}&app_key=${TRADE_API.APP_KEY}&yesapi_allow_origin=1`,
             method: 'POST',
             data: requestData,
-            dataType: 'json'
+            dataType: 'json',
+            crossDomain: true  // 允许跨域
         })
         .done(function(res) {
             console.log('\n✅ 收到响应');
@@ -1012,6 +1037,8 @@ function initTabs() {
                 $('.image-preview').remove();
                 $('#img-url-status').text('');  // 清除状态文本
                 $('#publish-form button[type="submit"]').text('📦 发布物品');
+                // 恢复重置按钮
+                $('#publish-form button[type="reset"]').text('🔄 重置清空').off('click');
             }
             // 如果有编辑任务，保持表单数据和按钮文本不变
         }
