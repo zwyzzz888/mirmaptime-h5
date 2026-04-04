@@ -9,7 +9,8 @@
 
 // ==================== API 基础配置 ====================
 const TRADE_API = {
-    BASE_URL: 'http://api.yesapi.net',
+    //BASE_URL: 'http://api.yesapi.net',  // 旧地址
+    BASE_URL: 'https://api.yesapi.net',  // 使用 HTTPS 避免混合内容问题
     APP_KEY: 'C9D0523F019B3D49CF0D62F5CDCDF60F',
     
     // 数据表名称
@@ -74,7 +75,9 @@ function handleApiResponse(response, successCallback, errorCallback) {
     console.log('API 响应:', response);
     
     if (!response) {
-        errorCallback && errorCallback({ code: -1, msg: '网络请求失败' });
+        const errorMsg = '网络请求失败，请检查网络连接或 API 服务是否正常';
+        console.error(errorMsg);
+        errorCallback && errorCallback({ code: -1, msg: errorMsg });
         return;
     }
     
@@ -97,7 +100,7 @@ function handleApiResponse(response, successCallback, errorCallback) {
         console.error('请求错误:', errMsg);
         errorCallback && errorCallback({ 
             code: response.ret || -1, 
-            msg: errMsg 
+            msg: errMsg + '（如果是在 HTTPS 页面访问，请确认 API 支持 HTTPS）'
         });
     }
 }
