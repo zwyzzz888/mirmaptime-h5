@@ -354,7 +354,6 @@ function renderGoodsDetail(goods) {
         <p><strong>物品属性：</strong>${goods.goods_attr || '无'}</p>
         <p style="color:#e74c3c;font-size:18px;font-weight:bold;"><strong>价格：</strong>${formatPrice(goods.price, goods.currency_type)}</p>
         <p><strong>联系方式：</strong>${contactType}：<span style="color:#007bff;font-weight:bold;" onclick="copyContact('${goods.contact_info}')">${goods.contact_info} <small style="color:#999;cursor:pointer;">(点击复制)</small></span></p>
-        <p><strong>卖家：</strong>${goods.username || '未知'}</p>
         <p><strong>发布时间：</strong>${goods.create_time}</p>
         <div class="trade-risk-notice" style="margin-top:20px;">
             <p style="margin:0;"><strong>⚠️ 风险提示：</strong>本站仅提供信息公示服务，不参与任何交易过程。请自行判断对方信用，谨防上当受骗！</p>
