@@ -768,7 +768,18 @@ function handleImageUpload(file) {
             url: `${IMAGE_HOST.BASE_URL}/?s=${IMAGE_HOST.UPLOAD_SERVICE}&app_key=${TRADE_API.APP_KEY}&yesapi_allow_origin=1`,
             method: 'POST',
             data: requestData,
-            dataType: 'json'
+            dataType: 'json',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+            },
+            timeout: 60000,  // 60秒超时
+            xhrFields: {
+                withCredentials: false
+            }
         })
         .done(function(res) {
             console.log('\n✅ 收到响应');
