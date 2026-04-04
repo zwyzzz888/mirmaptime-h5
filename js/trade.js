@@ -763,7 +763,10 @@ function uploadImage() {
             method: 'POST',
             data: formData,
             headers: {
-                'Auth-Token': IMAGE_HOST.TOKEN
+                'Auth-Token': IMAGE_HOST.TOKEN,
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST, OPTIONS',
+                'Access-Control-Allow-Headers': 'Content-Type, Auth-Token'
             },
             processData: false,
             contentType: false,
