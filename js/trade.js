@@ -119,14 +119,13 @@ function checkLoginStatus() {
     const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
     
     if (token && userInfo.username) {
-        // 已登录，显示用户面板
-        $('#trade-login-prompt').hide();
-        $('#trade-user-panel').show();
+        // 已登录，显示用户信息
         $('#user-name').text(userInfo.username);
+        console.log('用户已登录:', userInfo.username);
     } else {
-        // 未登录，显示登录提示
-        $('#trade-login-prompt').show();
-        $('#trade-user-panel').hide();
+        // 未登录，清除用户信息显示
+        $('#user-name').text('');
+        console.log('用户未登录');
     }
 }
 
@@ -266,7 +265,6 @@ function renderTradeList(list) {
                 <p><strong>类型：</strong>${getTypeName(item.goods_type)}</p>
                 ${item.goods_attr ? `<p><strong>属性：</strong>${item.goods_attr}</p>` : ''}
                 <p style="color:#e74c3c;font-weight:bold;"><strong>价格：</strong>${formatPrice(item.price, item.currency_type)}</p>
-                <p><strong>卖家：</strong>${item.username || '未知'}</p>
                 <p><small>发布时间：${item.create_time}</small></p>
             </div>
         `;
@@ -907,6 +905,18 @@ function initTabs() {
     $('.tab-btn').off('click').on('click', function() {
         const tabName = $(this).data('tab');
         
+        // 检查是否需要登录
+        const token = localStorage.getItem('user_token');
+        const userInfo = JSON.parse(localStorage.getItem('user_info') || '{}');
+        const isLoggedIn = token && userInfo.username;
+        
+        // 如果未登录且点击需要登录的标签页
+        if (!isLoggedIn && (tabName === 'publish' || tabName === 'my' || tabName === 'user')) {
+            showToast('请先登录');
+            showLoginModal();
+            return; // 阻止切换
+        }
+        
         // 切换按钮激活状态
         $('.tab-btn').removeClass('active');
         $(this).addClass('active');
@@ -1109,7 +1119,7 @@ function initModalClose() {
 $(document).ready(function() {
     console.log('交易信息发布模块已加载');
     
-    // 检查登录状态
+    // 检查登录状态（只更新用户信息显示，不控制面板）
     checkLoginStatus();
     
     // 初始化 Tab
@@ -1124,7 +1134,7 @@ $(document).ready(function() {
     // 初始化弹窗关闭
     initModalClose();
     
-    // 默认加载物品列表
+    // 默认加载物品列表（所有人可见）
     loadTradeList();
     
     // 为价格输入框添加整数限制
