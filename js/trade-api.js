@@ -172,6 +172,11 @@ function login(username, password) {
  */
 function register(username, password, email) {
     return new Promise((resolve, reject) => {
+        // 构建扩展信息对象
+        const extInfo = {
+            yesapi_email: email || ''
+        };
+        
         $.ajax({
             url: buildApiUrl(TRADE_API.SERVICE.REGISTER),
             method: 'POST',
@@ -179,8 +184,8 @@ function register(username, password, email) {
             data: {
                 username: username,
                 password: password,
-                // 扩展字段：邮箱
-                field_email: email
+                // 扩展字段：将邮箱放在 ext_info 中，需要 JSON 编码
+                ext_info: JSON.stringify(extInfo)
             },
             jsonpCallback: 'registerCallback'
         })

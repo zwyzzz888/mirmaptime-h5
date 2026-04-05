@@ -1119,6 +1119,21 @@ function initForms() {
         const passwordConfirm = $(this).find('[name="reg_password_confirm"]').val();
         const email = $(this).find('[name="reg_email"]').val();
         
+        // 验证邮箱是否为空
+        if (!email || email.trim() === '') {
+            showToast('请输入邮箱地址');
+            $('#reg-email').focus();
+            return;
+        }
+        
+        // 验证邮箱格式
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showToast('请输入有效的邮箱地址');
+            $('#reg-email').focus();
+            return;
+        }
+        
         // 验证两次密码是否一致
         if (password !== passwordConfirm) {
             showToast('两次输入的密码不一致，请重新输入');
