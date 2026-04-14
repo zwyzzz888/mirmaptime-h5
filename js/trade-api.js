@@ -250,7 +250,7 @@ function getCurrentUser() {
 function getGoodsList(params = {}) {
     const defaultParams = {
         page: params.page || 1,
-        perpage: params.perpage || 20
+        perpage: params.perpage || 21
     };
     
     // 添加可选的筛选条件
@@ -283,7 +283,7 @@ function getGoodsList(params = {}) {
                             list: data.items || [],
                             total: data.total || 0,
                             page: parseInt(params.page) || 1,
-                            perpage: parseInt(params.perpage) || 20
+                            perpage: parseInt(params.perpage) || 21
                         }
                     });
                 },

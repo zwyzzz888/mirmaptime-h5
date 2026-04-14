@@ -219,7 +219,7 @@ function loadTradeList(page = 1) {
     // 调用公开 API 获取物品列表
     TradeAPI.getGoodsList({
         page: page,
-        perpage: 20,
+        perpage: 21,
         title: keyword || undefined,
         goods_type: type || undefined,
         money_type: moneyType
