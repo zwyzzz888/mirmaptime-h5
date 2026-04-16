@@ -1,1 +1,8 @@
 .vscode
+/node_modules
+/.lingma
+/怪物经验衰减记录表.xlsx
+/怪物和人物等级衰减表.csv
+/怪物数据-原版Excel.csv
+/怪物数据-原版Excel.xlsx
+/怪物数据-原版Excel - 副本.xlsx
