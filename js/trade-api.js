@@ -4,14 +4,14 @@
  * 
  * 接口配置说明：
  * - 所有接口默认不验签
- * - app_key: C9D0523F019B3D49CF0D62F5CDCDF60F
+ * - APP_KEY 以 Base64 形式存储于 js/crypto-key.js，运行时解码（见 decodeApiKey）
  */
 
 // ==================== API 基础配置 ====================
 const TRADE_API = {
     //BASE_URL: 'http://api.yesapi.net',  // 旧地址
     BASE_URL: 'https://api.yesapi.net',  // 使用 HTTPS 避免混合内容问题
-    APP_KEY: 'C9D0523F019B3D49CF0D62F5CDCDF60F',
+    APP_KEY: decodeApiKey(ENCODED_KEYS.APP_KEY),
     
     // 数据表名称
     TABLE_NAME: 'shizai_trade_goods',
@@ -616,4 +616,3 @@ window.TradeAPI = {
 };
 
 console.log('✅ TradeAPI 已加载 - 果创云 YesAPI 接口封装完成');
-console.log('APP_KEY:', TRADE_API.APP_KEY);

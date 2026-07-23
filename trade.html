@@ -9,6 +9,8 @@
     <!-- 引入外部 JS 文件 -->
     <script type="text/javascript" src="https://wow.techbrood.com/libs/jquery/jquery-2.1.1.min.js"></script>
     <script src="https://unpkg.com/vconsole@3.3.4/dist/vconsole.min.js"></script>
+    <!-- 密钥保护：Base64 存储，运行时解码（须在其他脚本之前加载） -->
+    <script src="js/crypto-key.js"></script>
     <!-- 先加载 API 接口封装文件 -->
     <script src="js/trade-api.js" type="text/javascript"></script>
     <!-- 加载 AI 识别模块 -->
@@ -22,7 +24,7 @@
         
         // 🆕 初始化AI识别配置
         initAIConfig({
-            apiKey: 'sk-Y1CdlekhRLF1oJOPFB1aQMO5eN1WpokmIWcpox2rF5LJpQ8B',
+            apiKey: decodeApiKey(ENCODED_KEYS.AI_API_KEY),
             baseUrl: 'https://api.gemai.cc/v1',
             model: '[福利]gemini-3-flash-preview'
         });
